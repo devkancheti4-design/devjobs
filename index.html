@@ -6,6 +6,7 @@
 <title>DevJobs — one AI topic a day</title>
 <meta name="description" content="One interactive AI topic every day. How AI works, what AI companies do, and how AI takes jobs and gives jobs.">
 <meta name="theme-color" content="#0b0e14">
+<meta name="author" content="Devieswar">
 <meta property="og:title" content="DevJobs — one AI topic a day">
 <meta property="og:description" content="How AI works, what AI companies do, and how AI takes jobs and gives jobs. One interactive topic a day.">
 <style>
@@ -53,6 +54,23 @@ header{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
 h1{font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03em;margin:0 0 16px;font-weight:800}
 .hook{font-size:clamp(17px,2.4vw,20px);color:var(--ink2);margin:0 0 20px;line-height:1.55}
 .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.byline{display:flex;align-items:center;gap:9px;margin:0 0 22px;font-family:var(--mono);font-size:13px;color:var(--ink3)}
+.byline .who{color:var(--ink);font-weight:600;letter-spacing:-.01em}
+.byline .bd{width:5px;height:5px;border-radius:50%;background:var(--acc)}
+.bignote{position:relative;border:1px solid rgba(198,242,78,.3);border-radius:var(--rad);
+  background:linear-gradient(160deg,rgba(198,242,78,.09),rgba(90,209,255,.05) 55%,transparent);
+  padding:22px 22px 20px;margin:8px 0 34px;overflow:hidden}
+.bignote::after{content:"";position:absolute;inset:0;border-radius:var(--rad);pointer-events:none;
+  box-shadow:inset 0 0 60px -30px var(--acc)}
+.bignote h4{margin:0 0 14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--acc);display:flex;align-items:center;gap:8px}
+.bignote h4::before{content:"";width:16px;height:2px;background:var(--acc);border-radius:2px}
+.bignote p{margin:0 0 12px;font-size:17px;line-height:1.55;color:var(--ink)}
+.bignote p:last-of-type{margin-bottom:16px}
+.bignote .sig{font-family:var(--mono);font-size:13px;color:var(--ink2);border-top:1px dashed rgba(198,242,78,.25);
+  padding-top:13px;display:flex;align-items:center;gap:8px}
+.bignote .sig b{color:var(--acc);font-weight:600}
+@media(min-width:620px){.bignote{padding:26px 28px 22px}.bignote p{font-size:18px}}
 .tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;
   padding:4px 9px;border-radius:6px;background:rgba(198,242,78,.12);color:var(--acc);border:1px solid rgba(198,242,78,.25)}
 .tag.b{background:rgba(90,209,255,.1);color:var(--acc2);border-color:rgba(90,209,255,.22)}
@@ -220,8 +238,10 @@ footer p{margin:0 0 8px}
       <div class="kicker" id="kicker">day 1 · loading</div>
       <h1 id="title">…</h1>
       <p class="hook" id="hook"></p>
+      <div class="byline" id="byline"></div>
       <div class="meta" id="meta"></div>
     </section>
+    <div class="wrap" style="padding:0"><div id="bignote"></div></div>
     <article id="article"></article>
 
     <div class="react" id="react"></div>
@@ -239,7 +259,7 @@ footer p{margin:0 0 8px}
     </section>
   </div>
   <footer><div class="wrap">
-    <p><b style="color:var(--ink2)">DevJobs</b> — made for my friends. One AI topic a day: how it works, what these companies actually do, and what it does to jobs.</p>
+    <p><b style="color:var(--ink2)">DevJobs</b> — made by Devieswar, for my friends. One AI topic a day: how it works, what these companies actually do, and what it does to jobs.</p>
     <p>Nothing you click here leaves your phone. Your quiz score and streak live in your own browser.</p>
   </div></footer>
 </main>
@@ -645,6 +665,11 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
   $('#title').textContent = day.title;
   $('#hook').textContent = day.hook;
   document.title = 'DevJobs · Day ' + day.n + ' — ' + day.title;
+  $('#byline').innerHTML = '<span class="bd"></span>made by <span class="who">' + SITE.author + '</span> · one topic a day, every day';
+  const bn = SITE.note;
+  $('#bignote').innerHTML = '<div class="bignote"><h4>' + bn.title + '</h4>'
+    + bn.lines.map(l => '<p>' + l + '</p>').join('')
+    + '<div class="sig">— <b>' + bn.sign + '</b></div></div>';
   $('#meta').innerHTML = '<span class="tag">' + day.tag + '</span><span class="tag b">' + day.read + ' read</span><span class="tag b">' + (day.blocks.filter(b => b.t === 'lab').length) + ' things to play with</span>';
 
   const art = $('#article');

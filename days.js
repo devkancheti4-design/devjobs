@@ -12,6 +12,20 @@
      {t:'quote', text:'...', who:'name, year'}
    ============================================================ */
 
+/* ---- Site-level stuff: your byline and the pinned note. Edit freely. ---- */
+const SITE = {
+  author: 'Devieswar',
+  note: {
+    title: 'one thing I am hyper OCD about',
+    lines: [
+      'One topic. Every single day. No skipping, no filler, and nothing posted here that I do not understand myself first.',
+      'You do not need to know anything to start — you only need to want to know how the thing that is reshaping your career actually works.',
+      '<strong>If you are ambitious and hungry, join in.</strong> Use it, break it, argue with it, tell me what did not land — and I will fix it the same day.'
+    ],
+    sign: 'Devieswar'
+  }
+};
+
 const DAYS = [
   {
     n: 1,
