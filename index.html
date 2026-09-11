@@ -54,9 +54,9 @@ header{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
 h1{font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03em;margin:0 0 16px;font-weight:800}
 .hook{font-size:clamp(17px,2.4vw,20px);color:var(--ink2);margin:0 0 20px;line-height:1.55}
 .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
-.byline{display:flex;align-items:center;gap:9px;margin:0 0 22px;font-family:var(--mono);font-size:13px;color:var(--ink3)}
-.byline .who{color:var(--ink);font-weight:600;letter-spacing:-.01em}
-.byline .bd{width:5px;height:5px;border-radius:50%;background:var(--acc)}
+.byline{margin:0 0 22px;font-family:var(--mono);font-size:13px;color:var(--ink3);line-height:1.8}
+.byline .who{color:var(--ink);font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.byline .bd{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acc);margin-right:8px;vertical-align:middle}
 .bignote{position:relative;border:1px solid rgba(198,242,78,.3);border-radius:var(--rad);
   background:linear-gradient(160deg,rgba(198,242,78,.09),rgba(90,209,255,.05) 55%,transparent);
   padding:22px 22px 20px;margin:8px 0 34px;overflow:hidden}
@@ -264,7 +264,7 @@ footer p{margin:0 0 8px}
   </div></footer>
 </main>
 
-<script src="days.js?v=4"></script>
+<script src="days.js?v=5"></script>
 <script>
 /* =====================================================================
    DevJobs app — vanilla JS, no build step, no server.
