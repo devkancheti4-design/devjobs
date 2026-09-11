@@ -264,7 +264,7 @@ footer p{margin:0 0 8px}
   </div></footer>
 </main>
 
-<script src="days.js?v=3"></script>
+<script src="days.js?v=4"></script>
 <script>
 /* =====================================================================
    DevJobs app — vanilla JS, no build step, no server.
@@ -670,7 +670,7 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
   const want = parseInt(params.get('day'), 10);
   const day = DAYS.find(d => d.n === want) || DAYS[0];
 
-  $('#kicker').textContent = 'day ' + day.n + ' · ' + new Date(day.date + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+  $('#kicker').textContent = 'day ' + day.n;
   $('#title').textContent = day.title;
   $('#hook').textContent = day.hook;
   document.title = 'DevJobs · Day ' + day.n + ' — ' + day.title;
