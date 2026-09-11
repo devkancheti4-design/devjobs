@@ -248,14 +248,14 @@ footer p{margin:0 0 8px}
     <div class="react" id="react"></div>
 
     <section class="road">
-      <h3>The runway</h3>
-      <p class="sub">One topic a day. Four arcs, thirty days. Nothing here needs anything from a later day.</p>
+      <h3>The whole course</h3>
+      <p class="sub">Three days, then it is yours. Nothing on a day needs anything from a later one.</p>
       <div id="road"></div>
     </section>
 
     <section class="road" id="archiveWrap" hidden>
-      <h3>Past days</h3>
-      <p class="sub">Everything posted so far.</p>
+      <h3>All three days</h3>
+      <p class="sub">Jump to any of them.</p>
       <div class="archive" id="archive"></div>
     </section>
   </div>
@@ -265,7 +265,7 @@ footer p{margin:0 0 8px}
   </div></footer>
 </main>
 
-<script src="days.js?v=6"></script>
+<script src="days.js?v=7"></script>
 <script>
 /* =====================================================================
    DevJobs app — vanilla JS, no build step, no server.
@@ -656,6 +656,427 @@ function labQuiz(host, day) {
 const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, tokens: labTokens, predict: labPredict, timeline: labTimeline, quiz: labQuiz };
 </script>
 <script>
+/* =====================================================================
+   Day 2 + Day 3 labs. Everything here is software — nothing below needs
+   a GPU, a card or a machine you do not already own.
+   ===================================================================== */
+
+/* ============ LAB · who these companies actually are ================= */
+const COMPANIES = [
+  { k: 'openai', n: 'OpenAI', head: 7850, headTxt: '≈7,850 people at the end of 2025, heading for about 8,000 through 2026',
+    born: 'December 2015, as a non-profit lab', ships: 'ChatGPT, the GPT models, the API most startups build on',
+    names: 'Sam Altman (CEO) · Greg Brockman · Mira Murati (left 2024) · Ilya Sutskever (co-founder, left 2024) · Alec Radford (wrote GPT-1 and GPT-2)',
+    story: 'Started as a non-profit promising to give its research away, then built a capped-profit arm to pay for compute. Roughly a hundred people in 2018; almost eight thousand now. The research headcount has been growing near 100% a year — meaning half the people you would meet there joined in the last twelve months.' },
+  { k: 'anthropic', n: 'Anthropic', head: 5000, headTxt: '≈5,000 people in 2026 (estimates run 2,300–5,000 depending on who counts contractors)',
+    born: '2021', ships: 'Claude, the Claude API, Claude Code',
+    names: 'Dario Amodei (CEO) · Daniela Amodei (President) · Jared Kaplan · Chris Olah · Sam McCandlish',
+    story: 'Founded by people who left OpenAI — the Amodei siblings and a group of researchers — over disagreements about how fast to push and how to handle safety. Research headcount has grown even faster than OpenAI\'s, around 150% a year. This is the lab that made the model you are probably arguing with.' },
+  { k: 'gdm', n: 'Google DeepMind', head: 5090, headTxt: '5,090 people in 2026, up from 4,120 in 2025',
+    born: 'DeepMind 2010 in London; merged with Google Brain in 2023', ships: 'Gemini, AlphaFold, the models inside Search and Android',
+    names: 'Demis Hassabis (CEO, Nobel 2024) · Koray Kavukcuoglu · Oriol Vinyals · Jeff Dean (Google Chief Scientist)',
+    story: 'The oldest of the big labs and the slowest-growing — about 27% a year against OpenAI\'s 97%. It has also been losing senior researchers to rivals and startups, which is what happens when the people who wrote the papers can raise money on their names.' },
+  { k: 'pplx', n: 'Perplexity', head: 1368, headTxt: '1,368 people as of July 2026 — from roughly 300 in 2024',
+    born: '2022', ships: 'The answer engine, and the Comet browser',
+    names: 'Aravind Srinivas (CEO, IIT Madras → Berkeley → OpenAI) · Denis Yarats · Johnny Ho',
+    story: 'The clearest proof that you do not have to train a frontier model to matter. Perplexity mostly wraps other people\'s models in a better product, and got to a reported $22.6B valuation doing it. Its CEO is an IIT Madras graduate — the single most relevant fact on this page for anyone reading it from an Indian campus.' },
+  { k: 'prime', n: 'Prime Intellect', head: 0, headTxt: 'Team size is not public — the Prime Agent paper lists four named authors plus "the Prime Intellect team"',
+    born: 'January 2024', ships: 'Decentralised training software, the INTELLECT models, and Prime Agent',
+    names: 'Vincent Weißer · Johannes Hagemann (ex-Aleph Alpha) · Seth Karten · Alex L. Zhang · Kevin Thomas · Sebastian Müller',
+    story: 'Two years old, raised a $130M Series A in July 2026, and building the thing everyone said was impossible: training big models across machines scattered around the internet instead of one datacentre. Founded by people with no PhD lineage and no lab pedigree. Read that twice.' }
+];
+function labLabs(host) {
+  const { box, body } = labShell('the five rooms', 'Tap a company. Headcounts are the most recent public numbers, with the date attached.');
+  const chips = el('div', 'row'); chips.style.marginBottom = '16px';
+  const bars = el('div'); bars.style.margin = '0 0 16px';
+  const card = el('div', 'pcard');
+  const max = Math.max(...COMPANIES.map(c => c.head));
+  const show = k => {
+    const c = COMPANIES.find(x => x.k === k);
+    [...chips.children].forEach(b => b.classList.toggle('on', b.dataset.k === k));
+    [...bars.children].forEach(b => b.style.opacity = b.dataset.k === k ? '1' : '.4');
+    card.className = 'pcard key';
+    card.innerHTML = '<div class="av">' + c.n.slice(0, 2).toUpperCase() + '</div><div class="pc"><h5>' + c.n + '</h5>'
+      + '<div class="yr">' + c.born + ' · ' + c.headTxt + '</div>'
+      + '<p><b style="color:var(--ink)">Ships:</b> ' + c.ships + '</p>'
+      + '<p><b style="color:var(--ink)">Names you should know:</b> ' + c.names + '</p>'
+      + '<p class="why">▸ ' + c.story + '</p></div>';
+  };
+  COMPANIES.forEach(c => {
+    const b = el('button', 'rx', c.n); b.dataset.k = c.k;
+    b.addEventListener('click', () => show(c.k)); chips.appendChild(b);
+  });
+  COMPANIES.forEach(c => {
+    const row = el('button', 'bar'); row.dataset.k = c.k; row.style.marginBottom = '6px';
+    const w = c.head ? (c.head / max * 100) : 2;
+    row.innerHTML = '<span class="bn">' + c.n + '</span><span class="bt"><span class="bw" style="width:' + w + '%"></span></span><span>'
+      + (c.head ? c.head.toLocaleString('en-IN') : 'n/a') + '</span>';
+    row.addEventListener('click', () => show(c.k)); bars.appendChild(row);
+  });
+  body.appendChild(chips); body.appendChild(bars); body.appendChild(card);
+  body.appendChild(el('p', 'hint', 'Every one of these companies is, in headcount terms, smaller than one campus of an Indian IT services firm. Infosys has over 300,000 people. OpenAI has under eight thousand.'));
+  show('openai'); host.appendChild(box);
+}
+
+/* ============ LAB · what each worker is actually paid ================ */
+const PAY = [
+  { k: 'services', n: 'AI fresher at an IT services firm', what: 'You are put on an "AI project" that is mostly integration work: calling an API, cleaning data, writing glue. Real experience, modest pay, and the fastest door to walk through from a tier-2 or tier-3 campus.',
+    India: { bands: [['TCS / Infosys AI-ML fresher', 5.8, 9]], unit: 'LPA', note: 'Same offer letters your seniors are getting right now.', src: 'Indian 2026 salary surveys (Taggd, Jaro, upGrad)' },
+    US: { bands: [], unit: 'K', note: 'No clean equivalent — this rung is mostly contractor work in the US.', src: '' } },
+  { k: 'applied', n: 'Applied AI / ML engineer', what: 'You build the thing users touch: retrieval, prompts, evals, agents, latency, cost. This is the job most people reading this will actually get, and the one with the shortest path from where you are today.',
+    India: { bands: [['Fresher (0–2 yrs)', 6, 10], ['Mid (3–6 yrs)', 12, 30], ['Senior (7+ yrs)', 30, 60]], unit: 'LPA', note: 'Bengaluru pays 15–25% over Pune or Chennai. GenAI, fine-tuning, MLOps and agent skills carry a reported 25–45% premium on top of these bands.', src: 'Indian 2026 salary surveys (Taggd, Scaler, upGrad, Jaro)' },
+    US: { bands: [['Anthropic, all levels', 199, 785], ['OpenAI, L2 → L6', 250, 1390]], unit: 'K', note: 'These are the top of the market, not the middle of it. Base pay at both clusters around $275K–$315K — everything above that is equity.', src: 'Levels.fyi data, updated May 2026' } },
+  { k: 'bigtech', n: 'AI engineer inside big tech', what: 'Same work, more process, far more stability. In India this is the realistic ceiling without leaving the country.',
+    India: { bands: [['Google India, AI engineer average', 46.5, 46.5], ['Amazon India', 26, 48]], unit: 'LPA', note: 'A Google India AI engineer out-earns most Indian startup CTOs.', src: 'Indian 2026 salary surveys' },
+    US: { bands: [['OpenAI median package', 880, 880], ['OpenAI L5 median', 1150, 1150]], unit: 'K', note: 'The L5 median of $1.15M is roughly $336K base plus $774K a year in stock.', src: 'Levels.fyi, May 2026' } },
+  { k: 'research', n: 'Frontier-lab research engineer', what: 'You run the experiments that decide what the next model can do. Small teams, extreme selection, and the pay that follows from both.',
+    India: { bands: [], unit: 'LPA', note: 'Frontier labs hire almost nobody in India. The honest local path is big tech or a startup that serves them.', src: '' },
+    US: { bands: [['Anthropic staff engineer, one report', 1250, 1250], ['OpenAI L6+', 1390, 1500]], unit: 'K', note: 'Of that $1.25M staff package, about $843K was equity — a bet on the company, not a salary.', src: 'Levels.fyi / public compensation reports 2026' } },
+  { k: 'annot', n: 'Data annotator / RLHF rater', what: 'You read model outputs all day and rank them. Every polite, useful answer you have ever received passed through work like this. It is the floor of the ladder, and it is where the industry hides its labour costs.',
+    India: { bands: [], unit: 'LPA', note: 'Not publicly benchmarked in India. Treat what you are offered as the floor, and treat the job as a door, not a destination.', src: '' },
+    US: { bands: [], unit: 'K', note: 'Reporting in 2023 on Kenyan workers labelling data for an OpenAI contractor put take-home pay around $1.32–$2 an hour. That is a 2023 figure for one contractor in one country — quoted here because nobody publishes a 2026 one.', src: 'TIME investigation, January 2023' } }
+];
+function labPay(host) {
+  const { box, body } = labShell('what each worker gets paid', 'Pick a job, pick where you are. Ranges are public 2026 numbers with the source named — no invented figures.');
+  const regionRow = el('div', 'row'); regionRow.style.marginBottom = '14px';
+  const roleWrap = el('div'); roleWrap.style.marginBottom = '16px';
+  const out = el('div');
+  const REGIONS = [['India', 'India'], ['US', 'United States']];
+  let region = 'India', role = 'applied';
+  const regionLabel = () => (REGIONS.find(r => r[0] === region) || [])[1] || region;
+  const render = () => {
+    [...regionRow.children].forEach(b => b.classList.toggle('on', b.dataset.r === region));
+    [...roleWrap.children].forEach(b => b.classList.toggle('on', b.dataset.k === role));
+    const r = PAY.find(p => p.k === role), d = r && r[region];
+    if (!d) return;
+    const max = Math.max(1, ...d.bands.map(b => b[2]));
+    out.innerHTML = '<p style="margin:0 0 14px;color:var(--ink2);font-size:15px;line-height:1.55">' + r.what + '</p>';
+    if (!d.bands.length) {
+      out.appendChild(el('div', 'note', '<h4>' + regionLabel() + '</h4><p>' + d.note + '</p>'));
+    } else {
+      const bars = el('div', 'bars');
+      d.bands.forEach(([label, lo, hi]) => {
+        const b = el('div', 'bar'); b.style.cursor = 'default';
+        const txt = d.unit === 'LPA'
+          ? (lo === hi ? '₹' + lo + 'L' : '₹' + lo + '–' + hi + 'L')
+          : (lo === hi ? '$' + lo + 'K' : '$' + lo + 'K–$' + (hi >= 1000 ? (hi / 1000).toFixed(2) + 'M' : hi + 'K'));
+        b.innerHTML = '<span class="bn">' + label + '</span><span class="bt">'
+          + '<span class="bw" style="margin-left:' + (lo / max * 100) + '%;width:' + Math.max(3, (hi - lo) / max * 100) + '%"></span></span>'
+          + '<span style="font-size:11.5px">' + txt + '</span>';
+        bars.appendChild(b);
+      });
+      out.appendChild(bars);
+      out.appendChild(el('div', 'note', '<h4>' + regionLabel() + '</h4><p>' + d.note + '</p>'));
+    }
+    if (d.src) out.appendChild(el('p', 'hint', 'Source: ' + d.src));
+  };
+  REGIONS.forEach(([key, label]) => {
+    const b = el('button', 'rx', label); b.dataset.r = key;
+    b.addEventListener('click', () => { region = key; render(); }); regionRow.appendChild(b);
+  });
+  PAY.forEach(p => {
+    const b = el('button', 'opt', p.n); b.dataset.k = p.k; b.style.marginBottom = '6px';
+    b.addEventListener('click', () => { role = p.k; render(); }); roleWrap.appendChild(b);
+  });
+  body.appendChild(regionRow); body.appendChild(roleWrap); body.appendChild(out); render();
+  host.appendChild(box);
+}
+
+/* ============ LAB · how they actually got there ===================== */
+const PATHS = [
+  { n: 'Aravind Srinivas', r: 'CEO, Perplexity', i: 'AS', why: 'The path an Indian undergrad can actually trace with a finger.',
+    steps: ['IIT Madras — dual degree in electrical engineering', 'PhD at UC Berkeley', 'Research internships at OpenAI, DeepMind and Google', 'Research scientist at OpenAI', 'Co-founded Perplexity in 2022', 'Reported to have become India\'s youngest billionaire in 2025'] },
+  { n: 'Demis Hassabis', r: 'CEO, Google DeepMind', i: 'DH', why: 'Games were not a detour from AI. They were the training.',
+    steps: ['Chess master as a teenager', 'Wrote games at Bullfrog — shipped Theme Park at 17', 'Founded his own studio, Elixir Games', 'Went back for a PhD in cognitive neuroscience at UCL', 'Founded DeepMind in 2010; sold it to Google in 2014', 'Shared the 2024 Nobel Prize in Chemistry for AlphaFold'] },
+  { n: 'Alec Radford', r: 'Wrote GPT-1 and GPT-2', i: 'AR', why: 'No PhD. The most quietly important engineer of the last decade.',
+    steps: ['Bachelor\'s degree from Olin College', 'Built generative models on his own and published DCGAN', 'Joined OpenAI early', 'First author on GPT-1, GPT-2 and CLIP', 'Left in 2025 to do independent research'] },
+  { n: 'Dario Amodei', r: 'CEO, Anthropic', i: 'DA', why: 'A physicist who changed fields and then changed companies.',
+    steps: ['PhD in physics (biophysics) at Princeton', 'Research at Baidu, then Google Brain', 'VP of Research at OpenAI', 'Left in 2021 with his sister Daniela and colleagues', 'Co-founded Anthropic and shipped Claude'] },
+  { n: 'Johannes Hagemann', r: 'Co-founder, Prime Intellect', i: 'JH', why: 'Two years old, $130M raised, no famous lab on the CV.',
+    steps: ['ML engineer at Aleph Alpha in Germany', 'Co-founded Prime Intellect in January 2024 with Vincent Weißer', 'Shipped INTELLECT-1 and INTELLECT-2 — models trained across the open internet', 'Raised a $130M Series A in July 2026', 'Shipped Prime Agent in August 2026'] }
+];
+function labPaths(host) {
+  const { box, body } = labShell('how they got in', 'Five real ladders. Tap a name and read every rung.');
+  const chips = el('div', 'row'); chips.style.marginBottom = '16px';
+  const out = el('div');
+  const show = i => {
+    const p = PATHS[i];
+    [...chips.children].forEach((b, j) => b.classList.toggle('on', i === j));
+    out.innerHTML = '<div class="pcard key"><div class="av">' + p.i + '</div><div class="pc"><h5>' + p.n + '</h5><div class="yr">' + p.r + '</div>'
+      + p.steps.map((s, k) => '<p style="margin:0 0 7px;display:flex;gap:10px"><span style="font-family:var(--mono);font-size:12px;color:var(--acc);flex:0 0 20px">'
+        + String(k + 1).padStart(2, '0') + '</span><span>' + s + '</span></p>').join('')
+      + '<p class="why" style="margin-top:10px">▸ ' + p.why + '</p></div></div>';
+  };
+  PATHS.forEach((p, i) => {
+    const b = el('button', 'rx', p.n.split(' ')[0] + ' ' + p.n.split(' ')[1][0] + '.');
+    b.addEventListener('click', () => show(i)); chips.appendChild(b);
+  });
+  body.appendChild(chips); body.appendChild(out); show(0);
+  body.appendChild(el('p', 'hint', 'Three of these five never worked at a famous lab before starting the thing they are known for. Two of them do not have a PhD.'));
+  host.appendChild(box);
+}
+
+/* ============ LAB · the feed that shapes you ======================== */
+const TOPICS = [
+  { k: 'code', n: 'coding', c: '#c6f24e' }, { k: 'cricket', n: 'cricket', c: '#5ad1ff' },
+  { k: 'ai', n: 'AI', c: '#ffb454' }, { k: 'gym', n: 'gym', c: '#ff6b81' },
+  { k: 'film', n: 'movies', c: '#5ad19a' }, { k: 'meme', n: 'memes', c: '#b78bff' }
+];
+const POSTS = {
+  code: ['someone rewrote it in Rust again', 'a 400-line PR with no tests', 'why your loop is slow', 'the bug was a typo'],
+  cricket: ['last over finish', 'that catch at deep midwicket', 'selection drama, day 4', 'rain saves the match'],
+  ai: ['a model got a new benchmark', 'agent breaks out of its sandbox', 'open weights drop overnight', 'paper everyone is arguing about'],
+  gym: ['day 41 of the split', 'form check, be honest', 'protein is expensive now', 'PR on deadlift'],
+  film: ['the trailer everyone hates', 'three-hour runtime defended', 'a 1998 film re-released', 'the twist, explained'],
+  meme: ['this is too real', 'nobody: / me at 3am:', 'the cat one again', 'sir this is a Wendy\'s']
+};
+function labFeed(host) {
+  const { box, body } = labShell('the algorithm, running on you', 'Tap ♥ on what you like — just like you do all day. Watch what happens to everything else.');
+  const feed = el('div'); feed.style.margin = '0 0 14px';
+  const meter = el('div'); meter.style.margin = '0 0 12px';
+  const readout = el('div', 'readout');
+  const ctrl = el('div');
+  let w = {}, taps = 0, eps = 0.25;
+  TOPICS.forEach(t => w[t.k] = 1);
+  const pick = () => {
+    if (Math.random() < eps) return TOPICS[Math.floor(Math.random() * TOPICS.length)].k;
+    const tot = Object.values(w).reduce((a, b) => a + b, 0);
+    let r = Math.random() * tot;
+    for (const t of TOPICS) { r -= w[t.k]; if (r <= 0) return t.k; }
+    return TOPICS[0].k;
+  };
+  function renderMeter() {
+    const tot = Object.values(w).reduce((a, b) => a + b, 0);
+    meter.innerHTML = '<div style="display:flex;height:14px;border-radius:5px;overflow:hidden;border:1px solid var(--line)">'
+      + TOPICS.map(t => '<div title="' + t.n + '" style="width:' + (w[t.k] / tot * 100) + '%;background:' + t.c + ';opacity:.85"></div>').join('')
+      + '</div><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--ink3)">'
+      + TOPICS.map(t => '<span><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:' + t.c + ';margin-right:5px"></span>'
+        + t.n + ' ' + Math.round(w[t.k] / tot * 100) + '%</span>').join('') + '</div>';
+    const share = Math.max(...TOPICS.map(t => w[t.k] / tot));
+    const div = Math.round((1 - (share - 1 / 6) / (1 - 1 / 6)) * 100);
+    readout.innerHTML = 'taps: <b>' + taps + '</b> · biggest topic owns <b>' + Math.round(share * 100) + '%</b> of your feed · variety left: <b style="color:'
+      + (div > 70 ? 'var(--good)' : div > 40 ? 'var(--warn)' : 'var(--bad)') + '">' + div + '%</b>'
+      + (taps >= 6 && div < 45 ? '<br><span style="color:var(--bad)">You never asked for a narrower feed. You just tapped what you liked, and the optimiser did the rest.</span>' : '');
+  }
+  function renderFeed() {
+    feed.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const k = pick(), t = TOPICS.find(x => x.k === k);
+      const line = POSTS[k][Math.floor(Math.random() * POSTS[k].length)];
+      const row = el('div'); row.style.cssText = 'display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#0d1119;margin-bottom:7px';
+      row.innerHTML = '<span style="font-family:var(--mono);font-size:10px;padding:3px 7px;border-radius:5px;border:1px solid ' + t.c + ';color:' + t.c + '">' + t.n + '</span>'
+        + '<span style="flex:1;font-size:14.5px">' + line + '</span>';
+      const like = el('button', 'rx', '♥'); like.style.cssText = 'padding:4px 10px;font-size:14px';
+      like.addEventListener('click', () => { w[k] += 1.6; taps++; renderFeed(); renderMeter(); });
+      row.appendChild(like); feed.appendChild(row);
+    }
+  }
+  slider(ctrl, 'how much new stuff it shows you (exploration)', 0, .6, .01, .25, v => Math.round(v * 100) + '%', v => { eps = v; renderFeed(); });
+  const row = el('div', 'row');
+  const scroll = el('button', 'btn', 'Scroll ▾'); const reset = el('button', 'btn sec', 'Fresh account');
+  scroll.addEventListener('click', renderFeed);
+  reset.addEventListener('click', () => { TOPICS.forEach(t => w[t.k] = 1); taps = 0; renderFeed(); renderMeter(); });
+  row.appendChild(scroll); row.appendChild(reset); ctrl.appendChild(row);
+  ctrl.appendChild(el('p', 'hint', 'That exploration slider is not yours. The platform sets it. Turn it down and the feed becomes a mirror; turn it up and you see things you never asked for. Every recommendation system you use is this loop, with a hundred million more signals.'));
+  body.appendChild(feed); body.appendChild(meter); body.appendChild(readout); body.appendChild(ctrl);
+  renderFeed(); renderMeter(); host.appendChild(box);
+}
+
+/* ============ LAB · flash news ====================================== */
+const NEWS = [
+  { d: '1 Sep 2026', tag: 'models', h: 'Claude Fable 5.1 goes generally available', w: 'Anthropic shipped Fable 5.1 at the same price as Fable 5 — $10 per million input tokens, $50 per million output.', y: 'Capability went up, price did not. That is the pattern of the last two years, and it is why an app you build today gets cheaper to run every quarter without you touching it.' },
+  { d: '2 Sep 2026', tag: 'models', h: 'Google ships Gemini 3.8 Flash', w: 'A fast, cheap model aimed at high-volume work. Reporting puts GPT-6 Astra at roughly 13× its cost per token.', y: 'The market is splitting into "expensive and smart" and "cheap and fast". Knowing which one your feature needs is a real engineering skill and it is worth money.' },
+  { d: 'week to 9 Sep 2026', tag: 'models', h: 'OpenAI releases GPT-6 "Astra"', w: 'OpenAI said the model crossed its own critical-cyber threshold. Reporting notes the announcement followed an incident where agents got out of a testing arena and reached private data on Hugging Face.', y: 'Agents that act on the internet break in ways chatbots never could. This is exactly why evals and red-teaming became paid jobs.' },
+  { d: '5 Aug 2026', tag: 'agents', h: 'Prime Intellect ships Prime Agent', w: 'A self-improving coding harness. It reports 95.5% Best@1 on ARC-AGI-3 against a 95.4% human-expert baseline, and it wrote Sega Genesis and Game Boy Color emulators from scratch.', y: 'A harness — the loop around the model — is now worth as much as the model. And the thing it proved itself on was games.' },
+  { d: 'Jul 2026', tag: 'money', h: 'Prime Intellect raises a $130M Series A', w: 'Led by Radical Ventures, with NVIDIA Ventures, Intel Capital and Dell Technologies Capital participating.', y: 'A two-year-old company training models across scattered machines just got funded by the incumbents it competes with.' },
+  { d: 'Sep 2026', tag: 'jobs', h: 'Microsoft stands up a 6,000-engineer AI deployment unit', w: 'Reported as a $2.5B group whose job is sitting with enterprise customers while they design and run AI systems.', y: 'Six thousand jobs that are not research. The money in this industry is moving toward the people who make it work in someone else\'s messy company.' },
+  { d: 'Jan 2026', tag: 'jobs', h: 'GDC survey: one in three US game devs laid off', w: '28% of respondents were laid off in the past two years (33% in the US). 52% now say generative AI\'s effect on the industry is negative — up from 30% a year earlier.', y: 'The people closest to the tools are the most negative about them. Take that seriously; they are not confused about what is happening to their jobs.' }
+];
+function labNews(host) {
+  const { box, body } = labShell('flash news · the stuff that actually changed things', 'Last few weeks only. Every card says what changed and why you should care.');
+  const filt = el('div', 'row'); filt.style.marginBottom = '14px';
+  const list = el('div');
+  let f = 'all';
+  const render = () => {
+    [...filt.children].forEach(b => b.classList.toggle('on', b.dataset.f === f));
+    list.innerHTML = '';
+    NEWS.filter(n => f === 'all' || n.tag === f).forEach(n => {
+      const c = el('div'); c.style.cssText = 'border:1px solid var(--line);border-radius:11px;background:#0f131d;padding:14px 16px;margin-bottom:9px';
+      c.innerHTML = '<div style="display:flex;gap:9px;align-items:center;margin-bottom:7px;font-family:var(--mono);font-size:11px;color:var(--ink3)">'
+        + '<span style="color:var(--acc)">' + n.d + '</span><span>·</span><span>' + n.tag + '</span></div>'
+        + '<div style="font-size:16.5px;font-weight:650;margin-bottom:7px;line-height:1.35">' + n.h + '</div>'
+        + '<p style="margin:0 0 9px;font-size:14.5px;color:var(--ink2);line-height:1.55">' + n.w + '</p>';
+      const why = el('div', 'why', '<b>Why it matters:</b> ' + n.y); why.hidden = true;
+      const t = el('button', 'btn sec', 'why it matters'); t.style.cssText = 'font-size:12.5px;padding:6px 12px';
+      t.addEventListener('click', () => { why.hidden = !why.hidden; t.textContent = why.hidden ? 'why it matters' : 'hide'; });
+      c.appendChild(t); c.appendChild(why); list.appendChild(c);
+    });
+  };
+  ['all', 'models', 'agents', 'money', 'jobs'].forEach(k => {
+    const b = el('button', 'rx', k); b.dataset.f = k;
+    b.addEventListener('click', () => { f = k; render(); }); filt.appendChild(b);
+  });
+  body.appendChild(filt); body.appendChild(list); render();
+  body.appendChild(el('p', 'hint', 'These are reported claims with dates attached, not gospel. Benchmark numbers come from the people selling the thing. Check them before you repeat them — that habit alone will put you ahead of most people posting about AI.'));
+  host.appendChild(box);
+}
+
+/* ============ LAB · what AI does to a game studio =================== */
+const STAGES = [
+  { k: 'art', n: 'Concept art', ppl: 50, ai: 12, t: 14, tai: 5, risk: 2, note: 'Studios that once ran 50 concept artists are reported to be getting by with about 12.' },
+  { k: 'tex', n: 'Textures & 3D assets', ppl: 24, ai: 9, t: 12, tai: 4, risk: 2, note: 'Generated textures and base meshes land in the pipeline as starting points, not finals.' },
+  { k: 'npc', n: 'NPC dialogue', ppl: 12, ai: 5, t: 10, tai: 3, risk: 3, note: 'Generated lines are infinite and forgettable. Written lines are finite and quotable.' },
+  { k: 'vo', n: 'Voice', ppl: 20, ai: 4, t: 8, tai: 2, risk: 3, note: 'The fight here is consent and residuals, not whether it technically works.' },
+  { k: 'qa', n: 'QA & bug hunting', ppl: 30, ai: 16, t: 10, tai: 5, risk: 1, note: 'Agents that play your build for 10,000 hours find crashes humans never reach. This one is a genuine win.' },
+  { k: 'loc', n: 'Localisation', ppl: 15, ai: 4, t: 6, tai: 2, risk: 2, note: 'Machine-first, human-reviewed is already the default in most studios.' },
+  { k: 'code', n: 'Engine & gameplay code', ppl: 60, ai: 48, t: 30, tai: 24, risk: 1, note: 'The least disrupted seat in the building. Someone still has to know why the frame dropped.' }
+];
+function labGames(host) {
+  const { box, body } = labShell('run a studio for a minute', 'Switch AI on stage by stage. Watch the team, the schedule and the risk of shipping slop move together.');
+  const rows = el('div'); rows.style.marginBottom = '14px';
+  const out = el('div', 'readout');
+  const on = {};
+  STAGES.forEach(s => on[s.k] = false);
+  function calc() {
+    let ppl = 0, t = 0, risk = 0, cut = 0;
+    STAGES.forEach(s => {
+      ppl += on[s.k] ? s.ai : s.ppl;
+      t = Math.max(t, on[s.k] ? s.tai : s.t);
+      if (on[s.k]) { risk += s.risk; cut += s.ppl - s.ai; }
+    });
+    const base = STAGES.reduce((a, s) => a + s.ppl, 0);
+    const bt = Math.max(...STAGES.map(s => s.t));
+    const maxRisk = STAGES.reduce((a, s) => a + s.risk, 0);
+    const riskBars = Math.round(risk / maxRisk * 10);
+    out.innerHTML = 'team: <b>' + ppl + '</b> people (was ' + base + ') · longest stage: <b>' + t + '</b> months (was ' + bt + ')'
+      + '<br>jobs removed: <b style="color:' + (cut > 60 ? 'var(--bad)' : cut > 0 ? 'var(--warn)' : 'var(--good)') + '">' + cut + '</b>'
+      + ' · slop risk: <b style="color:' + (riskBars > 6 ? 'var(--bad)' : riskBars > 3 ? 'var(--warn)' : 'var(--good)') + '">' + '▮'.repeat(Math.max(1, riskBars)) + '▯'.repeat(10 - Math.max(1, riskBars)) + '</b>'
+      + (cut > 80 ? '<br><span style="color:var(--bad)">You just shipped six months early with a third of the team. Players will smell it, and you will read about it on launch day.</span>'
+        : cut > 0 ? '<br><span style="color:var(--ink3)">This is the actual trade every studio is making right now, stage by stage.</span>' : '');
+  }
+  STAGES.forEach(s => {
+    const r = el('button', 'opt');
+    r.style.cssText = 'display:flex;align-items:center;gap:11px;margin-bottom:7px';
+    const sync = () => {
+      r.innerHTML = '<span style="font-family:var(--mono);font-size:15px;color:' + (on[s.k] ? 'var(--acc)' : 'var(--ink3)') + '">' + (on[s.k] ? '◉' : '○') + '</span>'
+        + '<span style="flex:1"><span style="font-size:15px">' + s.n + '</span>'
+        + '<span style="display:block;font-size:12.5px;color:var(--ink3);line-height:1.45;margin-top:2px">' + s.note + '</span></span>'
+        + '<span style="font-family:var(--mono);font-size:12px;color:' + (on[s.k] ? 'var(--bad)' : 'var(--ink3)') + '">' + (on[s.k] ? s.ai : s.ppl) + ' ppl</span>';
+    };
+    r.addEventListener('click', () => { on[s.k] = !on[s.k]; sync(); calc(); });
+    sync(); rows.appendChild(r);
+  });
+  body.appendChild(rows); body.appendChild(out); calc();
+  body.appendChild(el('div', 'note', '<h4>the other direction</h4><p>Prime Agent — a piece of software, no special hardware — wrote a Sega Genesis emulator and a Game Boy Color emulator from scratch, and posted a 100K+ score in Factorio. Games stopped being only a thing AI helps you build. They are now a thing AI plays, tests and rebuilds.</p>'));
+  host.appendChild(box);
+}
+
+/* ============ LAB · which engineer do you want to become? =========== */
+const ROLES = {
+  applied: { n: 'Applied AI engineer', tag: 'the one most of you should aim at',
+    day: 'You wire models into a product people use: retrieval, prompts, evals, latency, cost, and the ten edge cases that ruin a demo. You ship weekly.',
+    pay: 'India ₹6–10 LPA to start, ₹12–30 LPA at 3–6 years, ₹30–60 LPA senior at a product company. GenAI and agent skills carry a reported 25–45% premium.',
+    learn: ['Python well enough to be boring about it', 'One model API end to end — streaming, tool calls, retries, cost', 'Retrieval: chunking, embeddings, and why your search is bad'],
+    build: 'Ship a tool that answers questions over a document set your friends actually have — notes, PYQs, a syllabus — with citations. Put it online this week.' },
+  agent: { n: 'Agent / harness engineer', tag: 'newest seat in the room',
+    day: 'You build the loop around the model: tools, memory, sub-agents, retries, sandboxes, and the evals that catch it when it goes insane at step 40.',
+    pay: 'Paid like an applied engineer at the start and well above it once you can show an agent that survives contact with reality. Prime Agent exists because someone did this job well.',
+    learn: ['Tool calling and structured output until it is muscle memory', 'Sandboxing and failure handling — what happens at step 40', 'Writing evals: how do you prove today\'s change made it better?'],
+    build: 'An agent that does one boring task end to end — renames and files your downloads, or turns a messy PDF into a clean spreadsheet — and a test suite that proves it still works tomorrow.' },
+  infra: { n: 'Inference & serving engineer', tag: 'invisible, unkillable',
+    day: 'You make models answer fast and cheap: batching, caching, quantised weights, queueing, graceful degradation under load. Pure software.',
+    pay: 'Scarce skill, priced like it. This is the rung where Indian engineers compete directly with anyone, because latency graphs do not care where you live.',
+    learn: ['Profiling: where the milliseconds actually go', 'Caching and batching strategies', 'Running an open-weights model yourself and making it fast'],
+    build: 'Serve a small open model behind your own API with caching, and publish the before/after latency and cost numbers.' },
+  evals: { n: 'Evals & red-team engineer', tag: 'the job the incidents created',
+    day: 'You try to break models and the systems around them, then turn each break into a repeatable test. When a lab says a model crossed a threshold, this team measured it.',
+    pay: 'Rare enough that titles vary wildly; safety and evals teams at frontier labs sit inside the same bands as research engineering.',
+    learn: ['Benchmark design and contamination — why leaderboards lie', 'Prompt injection and tool-misuse attacks', 'Statistics: is this difference real or noise?'],
+    build: 'Take one public benchmark, find a way it can be gamed, and write it up with evidence. That write-up is a job application.' },
+  data: { n: 'Data engineer for AI', tag: 'where the quality actually comes from',
+    day: 'You build the pipelines that feed everything: collection, cleaning, dedup, labelling standards, and the boring infrastructure nobody tweets about.',
+    pay: 'India ₹6–12 LPA to start and climbs steadily; less spiky than modelling work, much more stable demand.',
+    learn: ['SQL and one pipeline tool, properly', 'Dedup, leakage, and labelling standards', 'Cost: what does one more terabyte actually cost you'],
+    build: 'Build a clean, documented dataset for something local — Telugu/Hindi text, campus placement data, local prices — and publish it with a datasheet.' },
+  research: { n: 'Research engineer', tag: 'hardest door, smallest room',
+    day: 'You run experiments that decide what the next model can do: training runs, ablations, reading papers before breakfast and killing your own ideas by lunch.',
+    pay: 'At US frontier labs, roughly $199K–$1.39M total compensation depending on the lab and level, mostly in equity. In India these seats barely exist yet.',
+    learn: ['Maths you can use: linear algebra, probability, optimisation', 'Reimplement a paper from scratch — one, completely', 'Read one paper a day for six months'],
+    build: 'Reproduce a known result on a small scale, publish the code and the failure modes. A reproduction nobody asked for is the strongest CV line you can write.' }
+};
+const QS = [
+  { q: 'It is a Saturday. Which one do you actually open?', a: [
+    { t: 'A product idea I want to ship by Sunday', s: { applied: 3, agent: 2 } },
+    { t: 'Something that keeps breaking until I fix it properly', s: { infra: 3, data: 2 } },
+    { t: 'A paper or a proof I do not understand yet', s: { research: 3, evals: 1 } },
+    { t: 'Something I want to break on purpose', s: { evals: 3, agent: 1 } }] },
+  { q: 'What annoys you most?', a: [
+    { t: 'A slow page', s: { infra: 3, applied: 1 } },
+    { t: 'A confident wrong answer', s: { evals: 3, research: 1 } },
+    { t: 'A messy spreadsheet', s: { data: 3 } },
+    { t: 'A great demo that dies in real use', s: { agent: 3, applied: 2 } }] },
+  { q: 'How do you feel about maths?', a: [
+    { t: 'I like it. Genuinely.', s: { research: 3, evals: 1 } },
+    { t: 'I can do it when it pays off', s: { infra: 2, data: 2, agent: 1 } },
+    { t: 'I would rather ship the thing', s: { applied: 3, agent: 1 } }] },
+  { q: 'Pick the win that would feel best.', a: [
+    { t: '500 people used the thing I made this week', s: { applied: 3 } },
+    { t: 'Cut response time from 3s to 300ms', s: { infra: 3 } },
+    { t: 'Found the failure nobody else saw', s: { evals: 3 } },
+    { t: 'My agent finished a 60-step job unattended', s: { agent: 3 } }] },
+  { q: 'Where do you want to be in three years?', a: [
+    { t: 'Running the engineering of a small product', s: { applied: 2, agent: 2 } },
+    { t: 'The person they call when it is on fire', s: { infra: 3, data: 1 } },
+    { t: 'Publishing things other people build on', s: { research: 3 } },
+    { t: 'Holding the line on what ships', s: { evals: 3 } }] }
+];
+function labBecome(host) {
+  const { box, body } = labShell('so — which engineer do you want to become?', 'Five questions. No email, no signup. The answer comes with the first thing to build.');
+  const qWrap = el('div'); const out = el('div');
+  let i = 0, score = { applied: 0, agent: 0, infra: 0, evals: 0, data: 0, research: 0 };
+  function ask() {
+    const Q = QS[i];
+    qWrap.innerHTML = '<div class="qn">question ' + (i + 1) + ' of ' + QS.length + '</div><p class="qq">' + Q.q + '</p>';
+    Q.a.forEach(opt => {
+      const b = el('button', 'opt', opt.t);
+      b.addEventListener('click', () => {
+        Object.entries(opt.s).forEach(([k, v]) => score[k] += v);
+        i++; i < QS.length ? ask() : result();
+      });
+      qWrap.appendChild(b);
+    });
+  }
+  function result() {
+    const ranked = Object.entries(score).sort((a, b) => b[1] - a[1]);
+    const r = ROLES[ranked[0][0]], second = ROLES[ranked[1][0]];
+    qWrap.innerHTML = '';
+    out.innerHTML = '<div class="bignote"><h4>you, in about 12 months</h4>'
+      + '<p style="font-size:23px;font-weight:750;margin-bottom:4px;letter-spacing:-.02em">' + r.n + '</p>'
+      + '<p style="font-family:var(--mono);font-size:12px;color:var(--ink3);margin-bottom:14px">' + r.tag + '</p>'
+      + '<p style="font-size:16px"><b>Your Tuesday:</b> ' + r.day + '</p>'
+      + '<p style="font-size:16px"><b>What it pays:</b> ' + r.pay + '</p>'
+      + '<p style="font-size:16px;margin-bottom:8px"><b>Learn, in this order:</b></p>'
+      + '<p style="font-size:15.5px;margin-bottom:12px">' + r.learn.map((l, k) => (k + 1) + '. ' + l).join('<br>') + '</p>'
+      + '<p style="font-size:16px"><b>Build this week:</b> ' + r.build + '</p>'
+      + '<div class="sig">closest runner-up — <b>' + second.n + '</b></div></div>';
+    const again = el('button', 'btn sec', 'Take it again');
+    again.addEventListener('click', () => { i = 0; Object.keys(score).forEach(k => score[k] = 0); out.innerHTML = ''; ask(); });
+    const all = el('button', 'btn sec', 'Show all six');
+    all.addEventListener('click', () => {
+      const seen = el('div'); seen.style.marginTop = '14px';
+      Object.values(ROLES).forEach(x => seen.appendChild(el('div', 'note', '<h4>' + x.n + '</h4><p>' + x.day + '<br><br><b style="color:var(--ink)">Pay:</b> ' + x.pay + '<br><b style="color:var(--ink)">First build:</b> ' + x.build + '</p>')));
+      out.appendChild(seen); all.disabled = true;
+    });
+    const row = el('div', 'row'); row.style.marginTop = '14px';
+    row.appendChild(again); row.appendChild(all); out.appendChild(row);
+  }
+  body.appendChild(qWrap); body.appendChild(out); ask();
+  host.appendChild(box);
+}
+
+Object.assign(LABS, { labs: labLabs, pay: labPay, paths: labPaths, feed: labFeed, news: labNews, games: labGames, become: labBecome });
+</script>
+
+<script>
 /* ================================ page render ======================= */
 (function () {
   // Defensive: if days.js is stale, missing or malformed, still render what we can.
@@ -707,6 +1128,17 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
     rxHost.appendChild(b);
   });
 
+  /* move through the course */
+  (function () {
+    const idx = DAYS.indexOf(day);
+    const nav = el('div', 'row'); nav.style.margin = '4px 0 8px';
+    const prev = DAYS[idx - 1], next = DAYS[idx + 1];
+    if (prev) { const a = el('a', 'btn sec', '‹ day ' + prev.n); a.href = '?day=' + prev.n; a.style.textDecoration = 'none'; nav.appendChild(a); }
+    if (next) { const a = el('a', 'btn', 'day ' + next.n + ': ' + next.title.slice(0, 34) + (next.title.length > 34 ? '…' : '') + ' ›'); a.href = '?day=' + next.n; a.style.textDecoration = 'none'; nav.appendChild(a); }
+    else { nav.appendChild(el('span', 'pill', 'that was the last day · course complete')); }
+    $('#react').parentNode.insertBefore(nav, $('#react'));
+  })();
+
   /* streak — counts distinct days you showed up */
   (function () {
     const today = new Date().toISOString().slice(0, 10);
@@ -737,8 +1169,8 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
     $('#archiveWrap').hidden = false;
     const a = $('#archive');
     DAYS.forEach(d => {
-      const c = el('a', 'acard' + (d.n === day.n ? '' : ''), '<div class="an">DAY ' + String(d.n).padStart(2, '0') + ' · ' + d.tag + '</div><div class="at">' + d.title + '</div><div class="ah">' + d.hook.slice(0, 120) + '…</div>');
-      c.href = '?day=' + d.n; a.appendChild(c);
+      const c = el('a', 'acard', '<div class="an">DAY ' + String(d.n).padStart(2, '0') + ' · ' + d.tag + '</div><div class="at">' + d.title + '</div><div class="ah">' + d.hook.slice(0, 120) + '…</div>');
+      c.href = '?day=' + d.n; if (d.n === day.n) { c.style.borderColor = 'var(--acc)'; c.style.background = 'rgba(198,242,78,.06)'; } a.appendChild(c);
     });
   }
 
