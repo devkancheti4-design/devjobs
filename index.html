@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DevJobs — one AI topic a day</title>
+<meta name="description" content="One interactive AI topic every day. How AI works, what AI companies do, and how AI takes jobs and gives jobs.">
+<meta name="theme-color" content="#0b0e14">
+<meta property="og:title" content="DevJobs — one AI topic a day">
+<meta property="og:description" content="How AI works, what AI companies do, and how AI takes jobs and gives jobs. One interactive topic a day.">
+<style>
+:root{
+  --bg:#0b0e14; --bg2:#11151f; --card:#151a26; --line:#232a3a;
+  --ink:#e8edf7; --ink2:#9aa6bf; --ink3:#65718c;
+  --acc:#c6f24e; --acc2:#5ad1ff; --warn:#ffb454; --bad:#ff6b81; --good:#5ad19a;
+  --rad:16px; --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:17px;line-height:1.62;letter-spacing:.005em;
+  background-image:radial-gradient(1100px 600px at 12% -8%,rgba(198,242,78,.07),transparent 60%),
+                   radial-gradient(900px 500px at 95% 0%,rgba(90,209,255,.06),transparent 55%);
+  background-attachment:fixed}
+img{max-width:100%}
+a{color:var(--acc2)}
+code{font-family:var(--mono);font-size:.88em;background:#0d1119;border:1px solid var(--line);
+  padding:.1em .38em;border-radius:6px;color:var(--acc)}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+
+/* ---------- top bar ---------- */
+header{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+  background:rgba(11,14,20,.82);border-bottom:1px solid var(--line)}
+.topbar{max-width:760px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--mono);font-weight:700;font-size:16px;letter-spacing:-.02em;
+  text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px}
+.logo b{color:var(--acc)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);
+  animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.spacer{flex:1}
+.pill{font-family:var(--mono);font-size:12px;color:var(--ink2);border:1px solid var(--line);
+  background:var(--bg2);padding:5px 10px;border-radius:999px;white-space:nowrap}
+.pill b{color:var(--acc)}
+.ghost{background:none;border:1px solid var(--line);color:var(--ink2);font:inherit;font-size:13px;
+  padding:6px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+.ghost:hover{color:var(--ink);border-color:var(--acc);transform:translateY(-1px)}
+
+/* ---------- hero ---------- */
+.hero{padding:44px 0 10px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:14px}
+h1{font-size:clamp(30px,7vw,46px);line-height:1.08;letter-spacing:-.03em;margin:0 0 16px;font-weight:800}
+.hook{font-size:clamp(17px,2.4vw,20px);color:var(--ink2);margin:0 0 20px;line-height:1.55}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+  padding:4px 9px;border-radius:6px;background:rgba(198,242,78,.12);color:var(--acc);border:1px solid rgba(198,242,78,.25)}
+.tag.b{background:rgba(90,209,255,.1);color:var(--acc2);border-color:rgba(90,209,255,.22)}
+
+/* ---------- article ---------- */
+article{padding:10px 0 40px}
+article h2{font-size:clamp(22px,4.2vw,28px);line-height:1.2;letter-spacing:-.02em;margin:44px 0 14px;font-weight:750}
+article h2::before{content:"";display:block;width:34px;height:3px;border-radius:2px;background:var(--acc);margin-bottom:14px}
+article p{margin:0 0 18px}
+article ul{margin:0 0 18px;padding-left:0;list-style:none}
+article ul li{position:relative;padding-left:26px;margin-bottom:14px}
+article ul li::before{content:"→";position:absolute;left:0;top:0;color:var(--acc);font-family:var(--mono)}
+.note{border:1px solid var(--line);border-left:3px solid var(--acc);background:linear-gradient(90deg,rgba(198,242,78,.06),transparent 40%);
+  border-radius:10px;padding:16px 18px;margin:0 0 22px}
+.note h4{margin:0 0 6px;font-size:13px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.note p{margin:0;color:var(--ink2)}
+blockquote{margin:0 0 22px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:var(--bg2)}
+blockquote p{font-size:19px;line-height:1.45;margin:0 0 10px;color:var(--ink)}
+blockquote cite{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--ink3)}
+
+/* ---------- labs ---------- */
+.lab{border:1px solid var(--line);background:var(--card);border-radius:var(--rad);margin:0 0 26px;overflow:hidden}
+.lab-head{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:#0f131d}
+.lab-head .t{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.lab-head .t b{color:var(--acc)}
+.lab-body{padding:18px 16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--acc);color:#0b0e14;border:0;font:inherit;font-weight:650;font-size:14px;
+  padding:9px 16px;border-radius:9px;cursor:pointer;transition:.15s}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.sec{background:var(--bg2);color:var(--ink);border:1px solid var(--line)}
+.btn.sec:hover{border-color:var(--acc);color:var(--acc)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+label.sl{display:block;margin-bottom:12px}
+label.sl .lab-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ink2);margin-bottom:5px}
+label.sl .lab-l b{color:var(--acc)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--line);outline:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--acc);cursor:pointer;border:3px solid var(--card);box-shadow:0 0 0 1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:3px solid var(--card)}
+input[type=text]{width:100%;background:#0d1119;border:1px solid var(--line);border-radius:9px;color:var(--ink);
+  font:inherit;font-size:15px;padding:10px 12px}
+input[type=text]:focus{outline:0;border-color:var(--acc)}
+canvas{display:block;width:100%;height:auto;border-radius:10px;background:#0d1119;border:1px solid var(--line);touch-action:none}
+.readout{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin-top:10px;line-height:1.7}
+.readout b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:620px){.grid2{grid-template-columns:1.05fr .95fr}}
+.hint{font-size:13.5px;color:var(--ink3);margin:10px 0 0}
+
+/* rings */
+.rings{display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 0 14px}
+.ring{border-radius:999px;display:flex;align-items:flex-start;justify-content:center;
+  padding:11px 0 0;cursor:pointer;transition:.2s;width:100%;max-width:420px;border:1.5px solid}
+.ring span{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase}
+.r1{border-color:#39435c;background:rgba(57,67,92,.14);height:230px;margin-bottom:-198px}
+.r2{border-color:#4b6fa8;background:rgba(75,111,168,.16);height:180px;max-width:340px;margin-bottom:-152px}
+.r3{border-color:#5ad1ff;background:rgba(90,209,255,.14);height:132px;max-width:262px;margin-bottom:-108px}
+.r4{border-color:var(--acc);background:rgba(198,242,78,.16);height:86px;max-width:184px}
+.ring.on{box-shadow:0 0 0 2px currentColor,0 0 26px -6px currentColor;filter:brightness(1.25)}
+.r1 span{color:#8b97b4}.r2 span{color:#8fb4e8}.r3 span{color:var(--acc2)}.r4 span{color:var(--acc)}
+.ringinfo{border-top:1px dashed var(--line);padding-top:14px;min-height:96px}
+.ringinfo h5{margin:0 0 6px;font-size:15.5px}
+.ringinfo p{margin:0 0 8px;color:var(--ink2);font-size:15px;line-height:1.55}
+.ringinfo .eg{font-family:var(--mono);font-size:12.5px;color:var(--ink3)}
+
+/* tokens */
+.toks{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0 6px;min-height:38px}
+.tok{font-family:var(--mono);font-size:13px;padding:4px 8px;border-radius:6px;border:1px solid;position:relative}
+.tok i{font-style:normal;font-size:9.5px;opacity:.65;display:block;text-align:center;letter-spacing:.03em}
+
+/* predict */
+.bars{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.bar{display:grid;grid-template-columns:88px 1fr 52px;gap:8px;align-items:center;font-family:var(--mono);font-size:12.5px;
+  background:none;border:0;color:var(--ink2);cursor:pointer;padding:0;text-align:left;width:100%}
+.bar:hover .bw{filter:brightness(1.3)}
+.bar .bn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.bt{height:16px;background:#0d1119;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.bw{height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));border-radius:3px;transition:width .25s}
+.sent{font-size:17px;line-height:1.7;padding:12px 14px;background:#0d1119;border:1px solid var(--line);border-radius:10px;min-height:56px}
+.sent .new{color:var(--acc)}
+.corpus{font-size:12.5px;color:var(--ink3);line-height:1.6;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-family:var(--mono)}
+
+/* timeline */
+.tl{position:relative;padding:6px 0 0}
+.tlline{position:relative;height:54px;margin:0 26px}
+.tlline::before{content:"";position:absolute;left:0;right:0;top:16px;height:2px;background:var(--line)}
+.tlprog{position:absolute;left:0;top:16px;height:2px;background:var(--acc);transition:width .2s}
+.tick{position:absolute;top:9px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--bg2);
+  border:2px solid var(--line);cursor:pointer;transition:.18s;padding:0}
+.tick:hover{border-color:var(--acc2);transform:scale(1.25)}
+.tick.on{background:var(--acc);border-color:var(--acc);transform:scale(1.45);box-shadow:0 0 16px -2px var(--acc)}
+.tick.key{border-color:var(--acc2)}
+.tick i{position:absolute;top:20px;left:50%;transform:translateX(-50%);font-style:normal;font-family:var(--mono);
+  font-size:10px;color:var(--ink3);white-space:nowrap}
+.pcard{display:flex;gap:14px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#0f131d;margin-top:10px}
+.av{width:52px;height:52px;flex:0 0 52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:17px;background:rgba(198,242,78,.12);color:var(--acc);border:1px solid rgba(198,242,78,.3)}
+.pcard.key .av{background:rgba(90,209,255,.14);color:var(--acc2);border-color:rgba(90,209,255,.35)}
+.pc h5{margin:0 0 2px;font-size:17px;letter-spacing:-.01em}
+.pc .yr{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-bottom:8px}
+.pc p{margin:0 0 8px;font-size:15px;color:var(--ink2);line-height:1.55}
+.pc .why{font-size:13.5px;color:var(--acc);border-top:1px dashed var(--line);padding-top:8px;margin:0}
+
+/* quiz */
+.q{margin-bottom:22px;padding-bottom:22px;border-bottom:1px dashed var(--line)}
+.q:last-child{border:0;margin:0;padding:0}
+.qn{font-family:var(--mono);font-size:11.5px;color:var(--acc);letter-spacing:.1em;margin-bottom:6px}
+.qq{font-size:16.5px;font-weight:600;margin:0 0 12px;line-height:1.45}
+.opt{display:block;width:100%;text-align:left;background:#0d1119;border:1px solid var(--line);color:var(--ink);
+  font:inherit;font-size:15px;padding:11px 14px;border-radius:9px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--acc2);transform:translateX(3px)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:rgba(90,209,154,.1);color:var(--good)}
+.opt.wrong{border-color:var(--bad);background:rgba(255,107,129,.08);color:var(--bad)}
+.why{font-size:14.5px;color:var(--ink2);background:var(--bg2);border-left:2px solid var(--acc);
+  padding:10px 14px;border-radius:0 8px 8px 0;margin-top:8px;line-height:1.55}
+.score{font-family:var(--mono);font-size:13px;color:var(--ink2);padding-top:14px;border-top:1px solid var(--line);margin-top:16px}
+.score b{color:var(--acc);font-size:16px}
+
+/* reactions + footer */
+.react{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0}
+.rx{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;
+  font:inherit;font-size:15px;color:var(--ink2);transition:.15s}
+.rx:hover{transform:translateY(-2px);border-color:var(--acc)}
+.rx.on{border-color:var(--acc);color:var(--acc);background:rgba(198,242,78,.1)}
+.rx b{font-family:var(--mono);font-size:12px;margin-left:5px}
+.road{margin:34px 0 0;border-top:1px solid var(--line);padding-top:30px}
+.road h3{font-size:19px;margin:0 0 4px}
+.road .sub{color:var(--ink3);font-size:14.5px;margin:0 0 18px}
+.arc{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);
+  margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+.arc::after{content:"";flex:1;height:1px;background:var(--line)}
+.rlist{display:grid;gap:8px}
+.ritem{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:10px;background:var(--card);align-items:baseline}
+.ritem .rn{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.ritem .rt{font-size:15px;font-weight:600;margin-bottom:2px}
+.ritem .rh{font-size:13.5px;color:var(--ink3);line-height:1.5}
+footer{border-top:1px solid var(--line);margin-top:44px;padding:26px 0 60px;color:var(--ink3);font-size:13.5px}
+footer p{margin:0 0 8px}
+.archive{display:grid;gap:10px;margin:18px 0 0}
+.acard{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);background:var(--card);
+  border-radius:12px;padding:14px 16px;transition:.15s}
+.acard:hover{border-color:var(--acc);transform:translateY(-2px)}
+.acard .an{font-family:var(--mono);font-size:11.5px;color:var(--acc);letter-spacing:.1em}
+.acard .at{font-size:16px;font-weight:650;margin:3px 0 3px}
+.acard .ah{font-size:13.5px;color:var(--ink3);line-height:1.5}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <a class="logo" href="#top"><span class="dot"></span>dev<b>jobs</b></a>
+    <div class="spacer"></div>
+    <span class="pill" id="streakPill">streak <b>0</b></span>
+    <button class="ghost" id="shareBtn">share</button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero">
+      <div class="kicker" id="kicker">day 1 · loading</div>
+      <h1 id="title">…</h1>
+      <p class="hook" id="hook"></p>
+      <div class="meta" id="meta"></div>
+    </section>
+    <article id="article"></article>
+
+    <div class="react" id="react"></div>
+
+    <section class="road">
+      <h3>The runway</h3>
+      <p class="sub">One topic a day. Four arcs, thirty days. Nothing here needs anything from a later day.</p>
+      <div id="road"></div>
+    </section>
+
+    <section class="road" id="archiveWrap" hidden>
+      <h3>Past days</h3>
+      <p class="sub">Everything posted so far.</p>
+      <div class="archive" id="archive"></div>
+    </section>
+  </div>
+  <footer><div class="wrap">
+    <p><b style="color:var(--ink2)">DevJobs</b> — made for my friends. One AI topic a day: how it works, what these companies actually do, and what it does to jobs.</p>
+    <p>Nothing you click here leaves your phone. Your quiz score and streak live in your own browser.</p>
+  </div></footer>
+</main>
+
+<script src="days.js"></script>
+<script>
+/* =====================================================================
+   DevJobs app — vanilla JS, no build step, no server.
+   Sections: helpers · page render · 7 interactive labs · streak/reactions
+   ===================================================================== */
+const $ = (s, r) => (r || document).querySelector(s);
+const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('devjobs.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('devjobs.' + k, JSON.stringify(v)); } catch (e) {} }
+};
+function fitCanvas(c, h) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = c.clientWidth || 300;
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.height = h + 'px';
+  const ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w, h };
+}
+function labShell(title, sub) {
+  const box = el('div', 'lab');
+  box.appendChild(el('div', 'lab-head', '<span class="t"><b>lab</b> · ' + title + '</span>'));
+  const body = el('div', 'lab-body');
+  if (sub) body.appendChild(el('p', 'hint', sub)).style.margin = '0 0 14px';
+  box.appendChild(body);
+  return { box, body };
+}
+function slider(body, label, min, max, step, val, fmt, onInput) {
+  const l = el('label', 'sl');
+  l.innerHTML = '<span class="lab-l"><span>' + label + '</span><b></b></span>';
+  const inp = el('input'); inp.type = 'range'; inp.min = min; inp.max = max; inp.step = step; inp.value = val;
+  const out = $('b', l);
+  const sync = () => { out.textContent = fmt(parseFloat(inp.value)); };
+  inp.addEventListener('input', () => { sync(); onInput(parseFloat(inp.value)); });
+  sync(); l.appendChild(inp); body.appendChild(l);
+  return { inp, sync };
+}
+
+/* ================================ LAB 1 · the four rings ============= */
+const RINGS = [
+  { c: 'r1', s: 'Artificial intelligence', n: 'Artificial intelligence', h: 'The goal, since 1956', p: 'Any attempt to make a machine do something that needs intelligence when a human does it. A chess engine, a spam filter, a self-driving car, a hand-written rulebook that diagnoses faults — all AI, and most of it has zero learning in it.', e: 'e.g. chess engines, expert systems, route planners' },
+  { c: 'r2', s: 'Machine learning', n: 'Machine learning', h: 'The method that won', p: 'Instead of writing the rules, you show the machine examples and let it adjust its own numbers until it stops being wrong. This is the shift that made everything after 2010 possible.', e: 'e.g. spam filters, credit scoring, recommendations' },
+  { c: 'r3', s: 'Deep learning', n: 'Deep learning', h: 'ML with many layers', p: 'Machine learning using neural networks stacked many layers deep. Each layer learns a slightly more abstract feature than the one below it — edges, then shapes, then faces. It needed GPUs and huge datasets to work, which is why it only took off after 2012.', e: 'e.g. face unlock, voice typing, self-driving vision' },
+  { c: 'r4', s: 'LLMs', n: 'Large language models', h: 'One deep model, trained on text', p: 'A deep network trained on an enormous amount of text to predict the next chunk of text. That single, boring objective is what produces something that can write code, argue, and summarise your notes.', e: 'e.g. GPT, Claude, Gemini, Llama — ChatGPT is the product, not the model' }
+];
+function labNesting(host) {
+  const { box, body } = labShell('the four rings', 'Tap any ring.');
+  const wrap = el('div', 'rings');
+  const info = el('div', 'ringinfo');
+  const draw = i => {
+    [...wrap.children].forEach((c, j) => c.classList.toggle('on', i === j));
+    const r = RINGS[i];
+    info.innerHTML = '<h5>' + r.n + ' — <span style="color:var(--ink3);font-weight:400">' + r.h + '</span></h5><p>' + r.p + '</p><div class="eg">' + r.e + '</div>';
+  };
+  RINGS.forEach((r, i) => {
+    const d = el('button', 'ring ' + r.c, '<span>' + r.s + '</span>');
+    d.type = 'button';
+    d.addEventListener('click', () => draw(i));
+    wrap.appendChild(d);
+  });
+  body.appendChild(wrap); body.appendChild(info); draw(0);
+  host.appendChild(box);
+}
+
+/* ================================ LAB 2 · one neuron ================= */
+function labNeuron(host) {
+  const { box, body } = labShell('one neuron, three knobs', 'Drag the knobs so the line separates green dots from pink dots. Then let the machine do it.');
+  const grid = el('div', 'grid2');
+  const left = el('div'); const right = el('div');
+  const cv = el('canvas'); left.appendChild(cv);
+  const read = el('div', 'readout'); left.appendChild(read);
+  grid.appendChild(left); grid.appendChild(right); body.appendChild(grid);
+
+  let W = [-1.2, 0.9], b = 0.55, pts = [], anim = null, seed = 7;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) / 1.2;
+  function makePts() {
+    pts = []; const ax = rnd() * 1.2 - .6, ay = rnd() * 1.2 - .6;
+    for (let i = 0; i < 26; i++) pts.push({ x: clamp(-.45 + ax * .3 + gauss() * .26, -.95, .95), y: clamp(-.4 + ay * .3 + gauss() * .26, -.95, .95), c: 0 });
+    for (let i = 0; i < 26; i++) pts.push({ x: clamp(.45 + ax * .3 + gauss() * .26, -.95, .95), y: clamp(.42 + ay * .3 + gauss() * .26, -.95, .95), c: 1 });
+  }
+  const score = p => W[0] * p.x + W[1] * p.y + b;
+  const acc = () => pts.filter(p => (score(p) > 0 ? 1 : 0) === p.c).length / pts.length;
+  function draw() {
+    const { ctx, w, h } = fitCanvas(cv, Math.min(cv.clientWidth, 320));
+    const X = v => (v + 1) / 2 * w, Y = v => h - (v + 1) / 2 * h;
+    ctx.clearRect(0, 0, w, h);
+    // shaded half-planes
+    const img = ctx.createImageData(1, 1);
+    ctx.save(); ctx.globalAlpha = .1;
+    for (let px = 0; px < w; px += 8) for (let py = 0; py < h; py += 8) {
+      const vx = px / w * 2 - 1, vy = 1 - py / h * 2;
+      ctx.fillStyle = (W[0] * vx + W[1] * vy + b) > 0 ? '#c6f24e' : '#ff6b81';
+      ctx.fillRect(px, py, 8, 8);
+    }
+    ctx.restore();
+    // grid
+    ctx.strokeStyle = '#1b2131'; ctx.lineWidth = 1;
+    for (let g = -1; g <= 1; g += .5) { ctx.beginPath(); ctx.moveTo(X(g), 0); ctx.lineTo(X(g), h); ctx.moveTo(0, Y(g)); ctx.lineTo(w, Y(g)); ctx.stroke(); }
+    // boundary
+    ctx.strokeStyle = '#e8edf7'; ctx.lineWidth = 2.5; ctx.beginPath();
+    if (Math.abs(W[1]) > 1e-6) { const y1 = -(W[0] * -1 + b) / W[1], y2 = -(W[0] * 1 + b) / W[1]; ctx.moveTo(X(-1), Y(y1)); ctx.lineTo(X(1), Y(y2)); }
+    else if (Math.abs(W[0]) > 1e-6) { const x0 = -b / W[0]; ctx.moveTo(X(x0), 0); ctx.lineTo(X(x0), h); }
+    ctx.stroke();
+    // dots
+    pts.forEach(p => {
+      const ok = (score(p) > 0 ? 1 : 0) === p.c;
+      ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 5.5, 0, 7);
+      ctx.fillStyle = p.c ? '#c6f24e' : '#ff6b81'; ctx.fill();
+      if (!ok) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 9, 0, 7); ctx.stroke(); }
+    });
+    const a = acc();
+    read.innerHTML = 'output = <b>' + W[0].toFixed(2) + '</b>·x + <b>' + W[1].toFixed(2) + '</b>·y + <b>' + b.toFixed(2) + '</b><br>'
+      + 'correct: <b style="color:' + (a > .95 ? 'var(--good)' : a > .8 ? 'var(--warn)' : 'var(--bad)') + '">' + Math.round(a * 100) + '%</b>'
+      + (a === 1 ? ' — perfect separation ✦' : ' · circled dots are its mistakes');
+  }
+  const s1 = slider(right, 'weight on x  (w₁)', -3, 3, .01, W[0], v => v.toFixed(2), v => { W[0] = v; stop(); draw(); });
+  const s2 = slider(right, 'weight on y  (w₂)', -3, 3, .01, W[1], v => v.toFixed(2), v => { W[1] = v; stop(); draw(); });
+  const s3 = slider(right, 'bias  (b)', -2, 2, .01, b, v => v.toFixed(2), v => { b = v; stop(); draw(); });
+  const btns = el('div', 'row');
+  const trainB = el('button', 'btn', 'Train it ▸'); const newB = el('button', 'btn sec', 'New dots');
+  btns.appendChild(trainB); btns.appendChild(newB); right.appendChild(btns);
+  right.appendChild(el('p', 'hint', 'Training just repeats one move: nudge each knob in the direction that reduces mistakes.'));
+  function stop() { if (anim) { cancelAnimationFrame(anim); anim = null; trainB.textContent = 'Train it ▸'; } }
+  function sync() { s1.inp.value = W[0]; s2.inp.value = W[1]; s3.inp.value = b; s1.sync(); s2.sync(); s3.sync(); }
+  trainB.addEventListener('click', () => {
+    if (anim) return stop();
+    trainB.textContent = 'Training…'; let steps = 0;
+    const tick = () => {
+      for (let k = 0; k < 3; k++) {
+        let g0 = 0, g1 = 0, gb = 0;
+        pts.forEach(p => { const z = 1 / (1 + Math.exp(-score(p) * 4)); const d = (z - p.c); g0 += d * p.x; g1 += d * p.y; gb += d; });
+        const lr = 1.2 / pts.length; W[0] -= lr * g0 * 4; W[1] -= lr * g1 * 4; b -= lr * gb * 4; steps++;
+      }
+      sync(); draw();
+      if (steps < 420 && acc() < 1) anim = requestAnimationFrame(tick); else stop();
+    };
+    anim = requestAnimationFrame(tick);
+  });
+  newB.addEventListener('click', () => { stop(); makePts(); draw(); });
+  makePts(); host.appendChild(box); requestAnimationFrame(draw);
+  window.addEventListener('resize', draw);
+}
+
+/* ================================ LAB 3 · gradient descent ========== */
+function labDescent(host) {
+  const { box, body } = labShell('rolling downhill', 'The whole of training, in one picture. Tap the curve to move the ball, then step.');
+  const cv = el('canvas'); body.appendChild(cv);
+  const read = el('div', 'readout'); body.appendChild(read);
+  const ctrl = el('div'); body.appendChild(ctrl);
+  const f = x => 0.35 * x * x * x * x - 0.9 * x * x + 0.15 * x + 1.25;
+  const df = x => 1.4 * x * x * x - 1.8 * x + 0.15;
+  let x = -1.95, lr = 0.12, trail = [], steps = 0, run = null, dead = false;
+  function draw() {
+    const { ctx, w, h } = fitCanvas(cv, 210);
+    const X = v => (v + 2.3) / 4.6 * w, Y = v => h - (v / 2.4) * (h - 22) - 12;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = '#1b2131'; ctx.lineWidth = 1;
+    for (let g = -2; g <= 2; g++) { ctx.beginPath(); ctx.moveTo(X(g), 0); ctx.lineTo(X(g), h); ctx.stroke(); }
+    ctx.beginPath(); ctx.strokeStyle = '#5ad1ff'; ctx.lineWidth = 2.5;
+    for (let v = -2.3; v <= 2.3; v += .02) { const px = X(v), py = Y(f(v)); v === -2.3 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }
+    ctx.stroke();
+    trail.forEach((t, i) => { ctx.beginPath(); ctx.arc(X(t), Y(f(t)), 3, 0, 7); ctx.fillStyle = 'rgba(198,242,78,' + (.12 + .5 * i / Math.max(1, trail.length)) + ')'; ctx.fill(); });
+    if (!dead) {
+      const px = X(x), py = Y(f(x));
+      ctx.beginPath(); ctx.arc(px, py, 9, 0, 7); ctx.fillStyle = '#c6f24e'; ctx.fill();
+      ctx.beginPath(); ctx.arc(px, py, 15, 0, 7); ctx.strokeStyle = 'rgba(198,242,78,.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+      const g = df(x), L = 42; const nx = 1 / Math.hypot(1, g), ny = g / Math.hypot(1, g);
+      ctx.beginPath(); ctx.moveTo(px - nx * L, py + ny * L); ctx.lineTo(px + nx * L, py - ny * L);
+      ctx.strokeStyle = '#ffb454'; ctx.lineWidth = 2; ctx.stroke();
+    }
+    ctx.fillStyle = '#65718c'; ctx.font = '11px ui-monospace,monospace';
+    ctx.fillText('loss', 6, 14); ctx.fillText('the knob →', w - 74, h - 4);
+    read.innerHTML = dead
+      ? '<b style="color:var(--bad)">diverged 💥</b> — the steps got bigger than the valley. This is the #1 way a real training run dies.'
+      : 'knob = <b>' + x.toFixed(3) + '</b> · loss = <b>' + f(x).toFixed(4) + '</b> · slope = <b>' + df(x).toFixed(3) + '</b> · steps = <b>' + steps + '</b>'
+        + (Math.abs(df(x)) < 0.02 ? '<br><span style="color:var(--good)">slope ≈ 0 — it has settled at the bottom. Training is done.</span>' : '');
+  }
+  slider(ctrl, 'learning rate (step size)', .01, 1.2, .01, lr, v => v.toFixed(2), v => { lr = v; });
+  const row = el('div', 'row');
+  const stepB = el('button', 'btn', 'One step'); const runB = el('button', 'btn sec', 'Run ▸'); const resB = el('button', 'btn sec', 'Reset');
+  row.appendChild(stepB); row.appendChild(runB); row.appendChild(resB); ctrl.appendChild(row);
+  ctrl.appendChild(el('p', 'hint', 'Orange line = the slope the machine measures. It always steps downhill. Push the rate past 0.9 and watch it blow up.'));
+  function step() {
+    if (dead) return;
+    trail.push(x); if (trail.length > 26) trail.shift();
+    x = x - lr * df(x); steps++;
+    if (!isFinite(x) || Math.abs(x) > 6) { dead = true; stopRun(); }
+    draw();
+  }
+  function stopRun() { if (run) { clearInterval(run); run = null; runB.textContent = 'Run ▸'; } }
+  stepB.addEventListener('click', step);
+  runB.addEventListener('click', () => { if (run) return stopRun(); runB.textContent = 'Pause'; run = setInterval(step, 90); });
+  resB.addEventListener('click', () => { stopRun(); x = -1.95; steps = 0; trail = []; dead = false; draw(); });
+  cv.addEventListener('pointerdown', e => {
+    const r = cv.getBoundingClientRect();
+    x = clamp((e.clientX - r.left) / r.width * 4.6 - 2.3, -2.2, 2.2);
+    dead = false; trail = []; steps = 0; draw();
+  });
+  host.appendChild(box); requestAnimationFrame(draw); window.addEventListener('resize', draw);
+}
+
+/* ================================ LAB 4 · tokenizer ================== */
+function labTokens(host) {
+  const { box, body } = labShell('what the model actually sees', 'Type anything. Watch it get chopped into tokens, then into numbers.');
+  const inp = el('input'); inp.type = 'text'; inp.value = 'Ilya Sutskever trained a neural network in Toronto.';
+  body.appendChild(inp);
+  const toks = el('div', 'toks'); body.appendChild(toks);
+  const read = el('div', 'readout'); body.appendChild(read);
+  body.appendChild(el('p', 'hint', 'Roughly 4 characters per token in English. Names, Hindi words and code split into more pieces — which is why they cost more and why models spell them badly.'));
+  const SUF = ['ing', 'tion', 'ed', 'er', 'ly', 'es', 's', 'al', 'ness'];
+  const COL = ['#c6f24e', '#5ad1ff', '#ffb454', '#ff6b81', '#5ad19a', '#b78bff'];
+  function chop(word) {
+    if (word.length <= 4) return [word];
+    for (const s of SUF) if (word.length > s.length + 2 && word.toLowerCase().endsWith(s)) return chop(word.slice(0, -s.length)).concat([s]);
+    const out = []; for (let i = 0; i < word.length; i += 4) out.push(word.slice(i, i + 4)); return out;
+  }
+  function tokenize(t) {
+    const out = []; let pending = false;
+    (t.match(/\s+|[A-Za-z']+|[0-9]+|[^\sA-Za-z0-9]/g) || []).forEach(chunk => {
+      if (/^\s+$/.test(chunk)) { pending = true; return; }
+      chop(chunk).forEach((p, i) => { out.push({ s: p, sp: pending && i === 0 }); });
+      pending = false;
+    });
+    return out;
+  }
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return Math.abs(h) % 99000 + 200; };
+  function render() {
+    const t = inp.value; const list = tokenize(t);
+    toks.innerHTML = '';
+    list.forEach((tk, i) => {
+      const c = COL[i % COL.length];
+      const chip = el('span', 'tok', (tk.sp ? '␣' : '') + tk.s.replace(/</g, '&lt;') + '<i>' + hash(tk.s) + '</i>');
+      chip.style.borderColor = c; chip.style.color = c; chip.style.background = 'rgba(255,255,255,.03)';
+      toks.appendChild(chip);
+    });
+    read.innerHTML = '<b>' + t.length + '</b> characters → <b>' + list.length + '</b> tokens → the model reads <b>' + list.length + '</b> numbers, never letters.';
+  }
+  inp.addEventListener('input', render); render(); host.appendChild(box);
+}
+
+/* ================================ LAB 5 · next-token predictor ====== */
+const CORPUS = `the model does not know anything it predicts the next token and then it predicts the next token again
+a model learns from data and the data decides what the model can say
+ai does not think it predicts and prediction is enough to write code and to write poetry
+the machine learns weights from examples and the weights are just numbers
+a neural network learns patterns from data and a large model learns more patterns from more data
+people ask if the model understands the honest answer is that it predicts very well
+jobs change when the machine learns a task and new jobs appear around the machine
+a student who understands the machine will not be replaced by the machine`;
+function labPredict(host) {
+  const { box, body } = labShell('predict the next word', 'A real (tiny) language model. It has read exactly the text at the bottom and nothing else.');
+  const sent = el('div', 'sent'); body.appendChild(sent);
+  const bars = el('div', 'bars'); body.appendChild(bars);
+  const ctrl = el('div'); ctrl.style.marginTop = '14px'; body.appendChild(ctrl);
+  const model = {};
+  const words = CORPUS.trim().split(/\s+/);
+  for (let i = 0; i < words.length - 1; i++) { const a = words[i], b = words[i + 1]; (model[a] = model[a] || {}); model[a][b] = (model[a][b] || 0) + 1; }
+  let seq = ['the', 'model'], temp = 1;
+  function nexts(w) {
+    const m = model[w]; if (!m) return [];
+    const tot = Object.values(m).reduce((a, b) => a + b, 0);
+    let list = Object.entries(m).map(([k, c]) => ({ w: k, p: c / tot }));
+    const z = list.map(o => Math.exp(Math.log(o.p) / temp));
+    const zs = z.reduce((a, b) => a + b, 0);
+    list = list.map((o, i) => ({ w: o.w, p: z[i] / zs })).sort((a, b) => b.p - a.p);
+    return list.slice(0, 6);
+  }
+  function render(flash) {
+    sent.innerHTML = seq.map((w, i) => i === seq.length - 1 && flash ? '<span class="new">' + w + '</span>' : w).join(' ');
+    const list = nexts(seq[seq.length - 1]);
+    bars.innerHTML = '';
+    if (!list.length) { bars.appendChild(el('p', 'hint', 'Dead end — this word never appeared mid-sentence in its training text. A real model never dead-ends, because it has read most of the internet.')); return; }
+    list.forEach(o => {
+      const b = el('button', 'bar');
+      b.innerHTML = '<span class="bn">' + o.w + '</span><span class="bt"><span class="bw" style="width:' + (o.p * 100).toFixed(1) + '%"></span></span><span>' + (o.p * 100).toFixed(1) + '%</span>';
+      b.addEventListener('click', () => { seq.push(o.w); render(true); });
+      bars.appendChild(b);
+    });
+  }
+  slider(ctrl, 'temperature (how reckless it is)', .3, 2, .05, 1, v => v.toFixed(2), v => { temp = v; render(false); });
+  const row = el('div', 'row');
+  const autoB = el('button', 'btn', 'Let it write 8 words');
+  const resB = el('button', 'btn sec', 'Reset');
+  row.appendChild(autoB); row.appendChild(resB); ctrl.appendChild(row);
+  ctrl.appendChild(el('p', 'hint', 'Low temperature = it always picks the safest word and repeats itself. High temperature = it takes risks and stops making sense. That one slider is most of the difference between a boring chatbot and an unhinged one.'));
+  autoB.addEventListener('click', () => {
+    let i = 0;
+    const go = () => {
+      const list = nexts(seq[seq.length - 1]); if (!list.length || i++ >= 8) return;
+      let r = Math.random(), acc = 0, pick = list[0];
+      for (const o of list) { acc += o.p; if (r <= acc) { pick = o; break; } }
+      seq.push(pick.w); render(true); setTimeout(go, 260);
+    };
+    go();
+  });
+  resB.addEventListener('click', () => { seq = ['the', 'model']; render(false); });
+  ctrl.appendChild(el('div', 'corpus', 'its entire training data:<br>' + CORPUS.replace(/\n/g, ' · ')));
+  render(false); host.appendChild(box);
+}
+
+/* ================================ LAB 6 · the timeline ============== */
+const PEOPLE = [
+  { y: '1950', n: 'Alan Turing', i: 'AT', w: 'Published <em>Computing Machinery and Intelligence</em>, which opens with "can machines think?" and replaces that unanswerable question with a test: could a machine hold a conversation you cannot tell from a human\'s?', k: 'He framed the entire question, 6 years before the field had a name.' },
+  { y: '1956', n: 'John McCarthy', i: 'JM', w: 'Wrote the 1955 proposal for a summer workshop at Dartmouth College — with Marvin Minsky, Nathaniel Rochester and Claude Shannon — and coined the term <strong>artificial intelligence</strong> in it. The workshop ran in 1956.', k: 'The field got its name and its first research agenda in one document.' },
+  { y: '1958', n: 'Frank Rosenblatt', i: 'FR', w: 'Built the <strong>perceptron</strong>: the first machine that adjusted its own weights from examples instead of being programmed. The Mark I was physical hardware, with motors turning potentiometers.', k: 'The direct ancestor of the neuron you just dragged sliders on.' },
+  { y: '1969', n: 'Minsky & Papert', i: 'MP', w: 'Their book <em>Perceptrons</em> proved a single-layer perceptron cannot even learn XOR. Funding evaporated and neural networks were near-dead for over a decade — the first <strong>AI winter</strong>.', k: 'A correct result, read as a verdict on the whole idea. Progress stopped for 15 years.' },
+  { y: '1970', n: 'Seppo Linnainmaa', i: 'SL', w: 'Published reverse-mode automatic differentiation in his master\'s thesis — the exact maths later called <strong>backpropagation</strong>. Paul Werbos proposed applying it to neural nets in 1974.', k: 'The most important algorithm in AI, published years before anyone knew what to do with it.' },
+  { y: '1980', n: 'Kunihiko Fukushima', i: 'KF', w: 'Built the <strong>Neocognitron</strong>, a layered vision network inspired by the visual cortex — the ancestor of every convolutional network.', k: 'Japan built the shape of modern computer vision, 32 years before it went mainstream.' },
+  { y: '1986', n: 'Rumelhart, Hinton & Williams', i: 'RHW', w: 'Their Nature paper made <strong>backpropagation</strong> famous and showed multi-layer networks could learn useful internal representations — killing the XOR objection.', k: 'Neural networks became trainable. Hinton then spent 25 years being told they were a dead end anyway.' },
+  { y: '1989', n: 'Yann LeCun', i: 'YL', w: 'At Bell Labs, applied backprop to <strong>convolutional networks</strong> that read handwritten digits. By the late 90s LeNet was reading a large share of the cheques in the US.', k: 'The first time a neural net did a real, boring, money-earning job.' },
+  { y: '1997', n: 'Hochreiter & Schmidhuber', i: 'HS', w: 'Invented the <strong>LSTM</strong>, a network that can hold information across long sequences instead of forgetting it. It ran Google Translate and voice recognition for years.', k: 'Sequences — language, speech, time — became learnable.' },
+  { y: '2007', n: 'Nvidia · CUDA', i: 'NV', w: 'Nvidia made graphics cards programmable for general-purpose maths. Researchers realised a GPU built for gamers could do the matrix multiplications of a neural net tens of times faster than a CPU.', k: 'Not a scientific idea at all — but without it, none of the rest happens.' },
+  { y: '2009', n: 'Fei-Fei Li', i: 'FL', w: 'Built <strong>ImageNet</strong>: ~14 million images, hand-labelled across thousands of categories, plus a public annual contest. Most of the field thought more data was the boring part.', k: 'She was right and they were wrong. The data made the breakthrough possible.' },
+  { y: '2012', n: 'Krizhevsky, Sutskever & Hinton', i: 'AK', k2: 1, w: '<strong>AlexNet</strong> won ImageNet, cutting top-5 error from roughly 26% to roughly 15% — an unheard-of jump. It trained on two consumer gaming GPUs in a Toronto flat, with Krizhevsky writing the CUDA code by hand.', k: 'The big bang. Every lab pivoted to deep learning within a year, and Nvidia\'s next decade was written.' },
+  { y: '2014', n: 'Sutskever, Vinyals & Le', i: 'IS', k2: 1, w: '<strong>Sequence to sequence</strong> learning: one network takes a whole sentence in and produces a whole sentence out, learned end to end, no hand-written grammar rules.', k: 'The shape of every chatbot, translator and summariser that followed.' },
+  { y: '2015', n: 'Bahdanau, Cho & Bengio', i: 'DB', w: 'Added <strong>attention</strong>: instead of squeezing the input into one fixed memory, let the model look back at every word and decide which ones matter right now.', k: 'The single idea the transformer was built around two years later.' },
+  { y: '2016', n: 'DeepMind · AlphaGo', i: 'DM', w: 'Demis Hassabis\' team built <strong>AlphaGo</strong>, which beat Lee Sedol 4–1 at Go — a game with more positions than atoms in the universe, and one experts thought was a decade away.', k: 'The moment the general public started paying attention.' },
+  { y: '2017', n: 'Vaswani et al. — 8 authors', i: 'TR', w: 'The Google paper <em>Attention Is All You Need</em> threw away recurrence and kept only attention. The result — the <strong>transformer</strong> — is the architecture of GPT, Claude, Gemini, Llama, all of them.', k: 'Every LLM you have ever used is this one 2017 paper, scaled up.' },
+  { y: '2020', n: 'OpenAI · GPT-3', i: 'O3', k2: 1, w: 'Founded in December 2015 with Sutskever as chief scientist, OpenAI bet that the transformer plus vastly more data and compute would keep improving. <strong>GPT-3</strong> (175 billion parameters) proved abilities appear from scale alone.', k: 'The scaling bet paid off. Most researchers had called it unimaginative.' },
+  { y: '2022', n: 'ChatGPT', i: 'GP', w: 'Released 30 November 2022 as a "low-key research preview". It reached an estimated 100 million users in about two months — the fastest consumer adoption ever recorded at the time.', k: 'AI stopped being a research topic and became something your family uses.' },
+  { y: '2024', n: 'Nobels · and Ilya leaves', i: 'NB', k2: 1, w: 'Hopfield and Hinton won the <strong>Nobel Prize in Physics</strong> for foundational work on neural networks; Hassabis and Jumper shared the Chemistry prize for AlphaFold. The same year, Sutskever left OpenAI and founded <strong>Safe Superintelligence Inc.</strong>', k: 'The ideas dismissed in 1969 and 1986 are now Nobel-winning physics.' }
+];
+function labTimeline(host) {
+  const { box, body } = labShell('75 years in 19 stops', 'Drag sideways. Blue ring = a stop Ilya Sutskever is personally attached to.');
+  const scroller = el('div'); scroller.style.overflowX = 'auto'; scroller.style.paddingBottom = '4px';
+  const line = el('div', 'tlline'); line.style.width = Math.max(260, PEOPLE.length * 46) + 'px';
+  const prog = el('div', 'tlprog'); line.appendChild(prog);
+  const card = el('div', 'pcard');
+  let cur = 0;
+  const show = i => {
+    cur = i; const p = PEOPLE[i];
+    [...line.querySelectorAll('.tick')].forEach((t, j) => t.classList.toggle('on', i === j));
+    prog.style.width = (i / (PEOPLE.length - 1) * 100) + '%';
+    card.className = 'pcard' + (p.k2 ? ' key' : '');
+    card.innerHTML = '<div class="av">' + p.i + '</div><div class="pc"><h5>' + p.n + '</h5><div class="yr">' + p.y + '</div><p>' + p.w + '</p><p class="why">▸ ' + p.k + '</p></div>';
+    const t = line.querySelectorAll('.tick')[i];
+    if (t) scroller.scrollTo({ left: Math.max(0, t.offsetLeft - scroller.clientWidth / 2), behavior: 'smooth' });
+  };
+  PEOPLE.forEach((p, i) => {
+    const t = el('button', 'tick' + (p.k2 ? ' key' : ''), '<i>' + p.y + '</i>');
+    t.type = 'button'; t.style.left = (i / (PEOPLE.length - 1) * 100) + '%';
+    t.setAttribute('aria-label', p.y + ' ' + p.n);
+    t.addEventListener('click', () => show(i));
+    line.appendChild(t);
+  });
+  scroller.appendChild(line); body.appendChild(scroller); body.appendChild(card);
+  const row = el('div', 'row'); row.style.marginTop = '12px';
+  const pb = el('button', 'btn sec', '‹ back'), nb = el('button', 'btn', 'next ›');
+  pb.addEventListener('click', () => show(Math.max(0, cur - 1)));
+  nb.addEventListener('click', () => show(Math.min(PEOPLE.length - 1, cur + 1)));
+  row.appendChild(pb); row.appendChild(nb); body.appendChild(row);
+  show(0); host.appendChild(box);
+}
+
+/* ================================ LAB 7 · quiz ====================== */
+function labQuiz(host, day) {
+  const { box, body } = labShell('six questions', 'No signup, no score sent anywhere. Wrong answers explain themselves.');
+  let done = 0, right = 0;
+  const sc = el('div', 'score');
+  (day.quiz || []).forEach((q, i) => {
+    const w = el('div', 'q');
+    w.appendChild(el('div', 'qn', 'Q' + (i + 1)));
+    w.appendChild(el('p', 'qq', q.q));
+    const why = el('div', 'why', '<b>Why:</b> ' + q.why); why.hidden = true;
+    const opts = q.options.map((o, j) => {
+      const b = el('button', 'opt', o);
+      b.addEventListener('click', () => {
+        opts.forEach(x => x.disabled = true);
+        opts[q.a].classList.add('right');
+        if (j !== q.a) b.classList.add('wrong'); else right++;
+        done++; why.hidden = false; update();
+      });
+      w.appendChild(b); return b;
+    });
+    w.appendChild(why); body.appendChild(w);
+  });
+  function update() {
+    const total = (day.quiz || []).length;
+    sc.innerHTML = 'answered <b>' + done + '</b>/' + total + ' · correct <b>' + right + '</b>'
+      + (done === total ? (right === total ? ' — flawless. Go teach someone else.' : right >= total - 2 ? ' — solid. You actually get it.' : ' — scroll back up, it is worth a second pass.') : '');
+    if (done === total) { const best = store.get('quiz.' + day.slug, 0); if (right > best) store.set('quiz.' + day.slug, right); }
+  }
+  body.appendChild(sc); update(); host.appendChild(box);
+}
+
+const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, tokens: labTokens, predict: labPredict, timeline: labTimeline, quiz: labQuiz };
+</script>
+<script>
+/* ================================ page render ======================= */
+(function () {
+  const params = new URLSearchParams(location.search);
+  const want = parseInt(params.get('day'), 10);
+  const day = DAYS.find(d => d.n === want) || DAYS[0];
+
+  $('#kicker').textContent = 'day ' + day.n + ' · ' + new Date(day.date + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+  $('#title').textContent = day.title;
+  $('#hook').textContent = day.hook;
+  document.title = 'DevJobs · Day ' + day.n + ' — ' + day.title;
+  $('#meta').innerHTML = '<span class="tag">' + day.tag + '</span><span class="tag b">' + day.read + ' read</span><span class="tag b">' + (day.blocks.filter(b => b.t === 'lab').length) + ' things to play with</span>';
+
+  const art = $('#article');
+  day.blocks.forEach(b => {
+    if (b.t === 'p') art.appendChild(el('p', null, b.html));
+    else if (b.t === 'h') art.appendChild(el('h2', null, b.text));
+    else if (b.t === 'note') art.appendChild(el('div', 'note', '<h4>' + b.title + '</h4><p>' + b.html + '</p>'));
+    else if (b.t === 'list') art.appendChild(el('ul', null, b.items.map(i => '<li>' + i + '</li>').join('')));
+    else if (b.t === 'quote') art.appendChild(el('blockquote', null, '<p>“' + b.text + '”</p><cite>' + b.who + '</cite>'));
+    else if (b.t === 'lab' && LABS[b.id]) LABS[b.id](art, day);
+  });
+
+  /* reactions — local to this device, no fake counters */
+  const RX = [['🔥', 'got it'], ['🤯', 'mind blown'], ['🐢', 'too slow'], ['🤔', 'lost me'], ['💬', 'have a question']];
+  const picked = new Set(store.get('rx.' + day.slug, []));
+  const rxHost = $('#react');
+  rxHost.appendChild(el('span', 'pill', 'how was day ' + day.n + '?'));
+  RX.forEach(([e, t]) => {
+    const b = el('button', 'rx' + (picked.has(t) ? ' on' : ''), e + ' <b>' + t + '</b>');
+    b.addEventListener('click', () => {
+      picked.has(t) ? picked.delete(t) : picked.add(t);
+      b.classList.toggle('on');
+      store.set('rx.' + day.slug, [...picked]);
+    });
+    rxHost.appendChild(b);
+  });
+
+  /* streak — counts distinct days you showed up */
+  (function () {
+    const today = new Date().toISOString().slice(0, 10);
+    const s = store.get('streak', { last: null, count: 0 });
+    if (s.last !== today) {
+      const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+      s.count = (s.last === y) ? s.count + 1 : 1;
+      s.last = today; store.set('streak', s);
+    }
+    $('#streakPill').innerHTML = 'streak <b>' + s.count + '</b>';
+  })();
+
+  /* roadmap */
+  const road = $('#road');
+  const arcs = [...new Set(UPCOMING.map(u => u.arc))];
+  arcs.forEach(a => {
+    road.appendChild(el('div', 'arc', a));
+    const list = el('div', 'rlist');
+    UPCOMING.filter(u => u.arc === a).forEach(u => {
+      list.appendChild(el('div', 'ritem', '<div class="rn">' + String(u.n).padStart(2, '0') + '</div><div><div class="rt">' + u.title + '</div><div class="rh">' + u.hook + '</div></div>'));
+    });
+    road.appendChild(list);
+  });
+
+  /* archive, once there is more than one day */
+  if (DAYS.length > 1) {
+    $('#archiveWrap').hidden = false;
+    const a = $('#archive');
+    DAYS.forEach(d => {
+      const c = el('a', 'acard' + (d.n === day.n ? '' : ''), '<div class="an">DAY ' + String(d.n).padStart(2, '0') + ' · ' + d.tag + '</div><div class="at">' + d.title + '</div><div class="ah">' + d.hook.slice(0, 120) + '…</div>');
+      c.href = '?day=' + d.n; a.appendChild(c);
+    });
+  }
+
+  /* share */
+  $('#shareBtn').addEventListener('click', async () => {
+    const url = location.origin + location.pathname + '?day=' + day.n;
+    const data = { title: 'DevJobs · Day ' + day.n, text: day.title, url };
+    try {
+      if (navigator.share) await navigator.share(data);
+      else { await navigator.clipboard.writeText(url); $('#shareBtn').textContent = 'copied ✓'; setTimeout(() => $('#shareBtn').textContent = 'share', 1600); }
+    } catch (e) {}
+  });
+
+  /* keyboard: arrows drive whichever lab is on screen last focused */
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      const tl = document.querySelector('.tick.on');
+      if (tl) { const all = [...tl.parentNode.querySelectorAll('.tick')]; const i = all.indexOf(tl); const n = clamp(i + (e.key === 'ArrowRight' ? 1 : -1), 0, all.length - 1); all[n].click(); }
+    }
+  });
+})();
+</script>
+</body>
+</html>
