@@ -16,7 +16,14 @@ Everything lives in [`days.js`](days.js). No build step, no server, no framework
 1. Copy the last `{ ... }` block inside `DAYS`.
 2. Bump `n`, set today's `date`, write a new `title`, `hook` and `blocks`.
 3. Put it at the **top** of the `DAYS` array (newest first).
-4. `git commit -am "day 2" && git push` — GitHub Pages redeploys in about a minute.
+4. Ship it:
+
+```bash
+./deploy.sh "day 2"
+```
+
+`deploy.sh` checks `days.js` for syntax errors, bumps the cache key so nobody gets a
+stale mix of new page + old content, pushes, and waits for GitHub Pages to finish.
 
 Older days stay reachable at `?day=1`, `?day=2`, … and show up in the **Past days**
 list automatically once there is more than one.

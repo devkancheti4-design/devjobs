@@ -264,7 +264,7 @@ footer p{margin:0 0 8px}
   </div></footer>
 </main>
 
-<script src="days.js"></script>
+<script src="days.js?v=3"></script>
 <script>
 /* =====================================================================
    DevJobs app — vanilla JS, no build step, no server.
@@ -657,6 +657,15 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
 <script>
 /* ================================ page render ======================= */
 (function () {
+  // Defensive: if days.js is stale, missing or malformed, still render what we can.
+  const FALLBACK_SITE = { author: 'Devieswar', note: { title: 'one thing I am hyper OCD about', lines: ['One topic. Every single day.'], sign: 'Devieswar' } };
+  const SITE_ = (typeof SITE !== 'undefined' && SITE) ? SITE : FALLBACK_SITE;
+  const NOTE_ = SITE_.note || FALLBACK_SITE.note;
+  if (typeof DAYS === 'undefined' || !DAYS || !DAYS.length) {
+    $('#title').textContent = 'Reloading today\u2019s post\u2026';
+    $('#hook').textContent = 'The content file did not load. Pull down to refresh — if it keeps happening, hard-refresh the page.';
+    return;
+  }
   const params = new URLSearchParams(location.search);
   const want = parseInt(params.get('day'), 10);
   const day = DAYS.find(d => d.n === want) || DAYS[0];
@@ -665,8 +674,8 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
   $('#title').textContent = day.title;
   $('#hook').textContent = day.hook;
   document.title = 'DevJobs · Day ' + day.n + ' — ' + day.title;
-  $('#byline').innerHTML = '<span class="bd"></span>made by <span class="who">' + SITE.author + '</span> · one topic a day, every day';
-  const bn = SITE.note;
+  $('#byline').innerHTML = '<span class="bd"></span>made by <span class="who">' + SITE_.author + '</span> · one topic a day, every day';
+  const bn = NOTE_;
   $('#bignote').innerHTML = '<div class="bignote"><h4>' + bn.title + '</h4>'
     + bn.lines.map(l => '<p>' + l + '</p>').join('')
     + '<div class="sig">— <b>' + bn.sign + '</b></div></div>';
@@ -711,11 +720,12 @@ const LABS = { nesting: labNesting, neuron: labNeuron, descent: labDescent, toke
 
   /* roadmap */
   const road = $('#road');
-  const arcs = [...new Set(UPCOMING.map(u => u.arc))];
+  const UP = (typeof UPCOMING !== 'undefined' && UPCOMING) ? UPCOMING : [];
+  const arcs = [...new Set(UP.map(u => u.arc))];
   arcs.forEach(a => {
     road.appendChild(el('div', 'arc', a));
     const list = el('div', 'rlist');
-    UPCOMING.filter(u => u.arc === a).forEach(u => {
+    UP.filter(u => u.arc === a).forEach(u => {
       list.appendChild(el('div', 'ritem', '<div class="rn">' + String(u.n).padStart(2, '0') + '</div><div><div class="rt">' + u.title + '</div><div class="rh">' + u.hook + '</div></div>'));
     });
     road.appendChild(list);
